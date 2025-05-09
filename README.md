@@ -19,7 +19,12 @@ sketch completo e aggiornato, con:
  Esempio output seriale ogni 60s:
 ----------
 VBAT (ADC): 734 → 12.00 V
+
 Soglia bassa (A1): 620
+
 Soglia alta (A0): 720
+
 VBAT nella zona neutra → nessuna azione
+
 Contatore reset watchdog attuale: 3	
+
