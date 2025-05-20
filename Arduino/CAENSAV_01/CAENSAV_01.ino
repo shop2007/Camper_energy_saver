@@ -1,7 +1,31 @@
+/*
+Watchdog hardware
+
+Rilevamento reset da watchdog
+
+Contatore dei reset salvato in EEPROM (2 byte)
+
+Beep di notifica al reset da watchdog
+
+Controllo tensione batteria ogni 60s
+
+Blink LED ogni 1s
+
+Comandi seriali:
+
+    z → azzera contatore
+
+    r → mostra contatore
+
+Stampa automatica del contatore ogni 60 secondi
+
+*/
+
+
 #include <avr/wdt.h>
 #include <avr/io.h>
 #include <EEPROM.h>
-
+bool Silenzioso = true;
 // Pin definitions
 const int RELAY_PIN = 6;
 const int LED_PIN = 3;
@@ -40,6 +64,8 @@ void setup() {
   digitalWrite(RELAY_PIN, LOW);
   digitalWrite(LED_PIN, LOW);
   digitalWrite(BUZZER_PIN, LOW);
+
+  beep(1);
 
   if (resetCause & _BV(WDRF)) {
     Serial.println("⚠️ Reset da Watchdog!");
@@ -134,9 +160,13 @@ void loop() {
 
 void beep(int count) {
   for (int i = 0; i < count; i++) {
-    digitalWrite(BUZZER_PIN, HIGH);
-    delay(100);
-    digitalWrite(BUZZER_PIN, LOW);
-    delay(100);
+    if (Silenzioso){
+      Serial.print(". ");
+    } else {
+      digitalWrite(BUZZER_PIN, HIGH);
+      delay(100);
+      digitalWrite(BUZZER_PIN, LOW);
+      delay(100);
+    }
   }
 }
