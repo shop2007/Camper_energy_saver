@@ -168,23 +168,28 @@ int VBAT_MOTORE_PIN = A2;
 
 
 
-int ContaSecondiVerificaBatterie=0;
-bool Test_a_banco = true; //inverte vbat servizi e motore
+
+
+bool Test_a_banco = false; //inverte vbat servizi e motore
 bool debug= false;
 
 // Timer variables
 unsigned long previousMillis = 0;
 //unsigned long previous60sMillis = 0;
 const unsigned long interval1s = 1000;
-int SecondiVerificaBatterie = 60;
 
-bool VerificaBatterieEseguita = false;
+
 
 //OROLOGIO
 unsigned int Secondi = 0;
 unsigned int Minuti = 0;
 unsigned int Ore = 0;
 unsigned int Giorni = 0;
+
+unsigned int ContaSecondi = 0; //mai azzerato
+unsigned int SecondiVerificaBatterie = 60;       // Intervallo modificabile
+unsigned int lastEsecuzione = 0;           // Ultimo valore di Secondi usato per chiamare la funzione
+
 
 
 // Partitore valori
@@ -508,7 +513,7 @@ void Menu() {
 
 /*
   SerialEvent occurs whenever a new data comes in the hardware serial RX. This
-  routine is run between each time loop() runs, so using delay inside loop can
+  routine is run between each time loop( ) runs, so using delay inside loop can
   delay response. Multiple bytes of data may be available.
 */
 void serialEvent() {
@@ -553,6 +558,8 @@ void TypeMenuList(void){
 
 void AggiornaOrologio(){
   Secondi = Secondi+1;
+  ContaSecondi = ContaSecondi+1;
+  
 
   if (Secondi==60){
     Secondi = 0;
@@ -589,19 +596,18 @@ void StampaOrologio(){
 //*******************************************************************
 
 void StampaStato(){
-  Serial.print(F(" Le dua batterie sono "));
+  Serial.print(F(" Le due batterie sono "));
   if (Relay_Status){
-    Serial.println(F(" CONNESSE ⚠️"));
+    Serial.println(F(" CONNESSE ⚠️⚠️⚠️⚠️⚠️"));
   } else {
-    Serial.println(F(" NON CONNESSE ❌"));
+    Serial.println(F(" NON CONNESSE ❌❌❌❌❌"));
   }
 }
 
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 void EseguiVerificaBatterie(){
-  VerificaBatterieEseguita = true;
-
+  
   if (adc_vbat_servizi_bit < trimmer_soglia_bassa_bit) {
       Relay_Status = false;
       digitalWrite(RELAY_PIN, LOW);
@@ -634,9 +640,7 @@ if (Test_a_banco){
 }  
 
 
-if (Test_a_banco){
-  SecondiVerificaBatterie = 2; // ogni 2 secondi
-}
+
   
   // Verifica causa del reset
   byte resetCause = MCUSR;
@@ -686,21 +690,29 @@ if (Test_a_banco){
   }
 
   wdt_enable(WDTO_2S); // Riattiva watchdog
+
 }
 
-void loop() {
+//*****************************end setup
 
+void loop() {
+\
+
+  
   wdt_reset(); // Resetta watchdog
 
   unsigned long currentMillis = millis();
 
-  //batterie da testare?
-  ContaSecondiVerificaBatterie = ContaSecondiVerificaBatterie +1;
-  if (ContaSecondiVerificaBatterie > SecondiVerificaBatterie){
-    ContaSecondiVerificaBatterie = 0;
 
-    EseguiVerificaBatterie();
-    VerificaBatterieEseguita = true;
+
+  //batterie da testare?
+  if ((SecondiVerificaBatterie > 0) && (ContaSecondi % SecondiVerificaBatterie == 0) && (ContaSecondi != 0)) {
+  
+    if (ContaSecondi != lastEsecuzione) {
+      
+      EseguiVerificaBatterie();
+      lastEsecuzione = ContaSecondi;
+    }
   }
 
 
@@ -715,6 +727,14 @@ void loop() {
     StampaStato();
     AggiornaOrologio();
     StampaOrologio();
+
+    if (debug){
+      Serial.print(F("Debug attivo"));
+      Serial.print(F("; ContaSecondi=")); Serial.print(ContaSecondi);
+      Serial.print(F("; SecondiVerificaBatterie=")); Serial.print(SecondiVerificaBatterie);
+      Serial.print(F("; lastEsecuzione=")); Serial.print(lastEsecuzione); 
+      Serial.println();
+    }
 
   }
 
