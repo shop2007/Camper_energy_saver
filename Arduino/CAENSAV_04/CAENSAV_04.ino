@@ -108,8 +108,8 @@ int trimmer_soglia_bassa_bit; // = analogRead(TRIMMER_SOGLIA_BASSA_PIN);
 int trimmer_soglia_alta_bit; // = analogRead(TRIMMER_SOGLIA_ALTA_PIN);
 float trimmer_soglia_bassa_volt; // = trimmer_soglia_bassa_bit * VREF / 1023.0 ;
 float trimmer_soglia_alta_volt; // = trimmer_soglia_alta_bit * VREF / 1023.0 ;
-float vV_SERVIZvizi_volt; // = adc_servizi_bit * VREF / 1023.0 * (R1 + R2) / R2;
-float vV_AVVIAMore_volt; // = adc_servizi_bit * VREF / 1023.0 * (R1 + R2) / R2;
+float batt_servizi_volt; // = adc_servizi_bit * VREF / 1023.0 * (R1 + R2) / R2;
+float batt_motore_volt; // = adc_servizi_bit * VREF / 1023.0 * (R1 + R2) / R2;
 
 
 
@@ -648,6 +648,8 @@ void StampaOrologio(){
           Secondi);
 
   Serial.println(buffer);
+  bluetooth.println(buffer);
+  
 }
 
 
@@ -657,10 +659,14 @@ void StampaOrologio(){
 void StampaStato(){
 
   Serial.print(F(" Batterie "));
+  bluetooth.print(F(" Batt. "));
+  
   if (Relay_Status){
-    Serial.print(F(" CONNESSE ⚠️⚠️⚠️⚠️⚠️"));
+    Serial.print(F(" CONNESSE 🛑🛑🛑"));
+    bluetooth.print(F(" CONN.🛑"));
   } else {
-    Serial.print(F(" NON CONNESSE ❌❌❌❌❌"));
+    Serial.print(F(" NON CONNESSE ✅✅✅"));
+    bluetooth.print(F(" DISCON. ✅"));
   }
 
 
@@ -673,14 +679,16 @@ void EseguiVerificaBatterie(){
   if (adc_servizi_bit < trimmer_soglia_bassa_bit) {
       Relay_Status = false;
       digitalWrite(RELAY_PIN, LOW);
-      Serial.println("VBAT sotto soglia bassa → relè disattivato");
+      Serial.println(F("VBAT serv. inf. soglia bassa → relè disattivato ✅"));
+      bluetooth.println(F("VBAT serv. inf. soglia bassa → relè disattivato ✅"));
       //beep(2);
       SemaforoVerdeOn();
       SemaforoRossoOff();
   } else if (adc_servizi_bit > trimmer_soglia_alta_bit) {
       Relay_Status = true;
       digitalWrite(RELAY_PIN, HIGH);
-      Serial.println("VBAT sopra soglia alta → relè attivato");
+      Serial.println(F("VBAT serv. super. soglia alta → relè attivato 🛑"));
+      bluetooth.println(F("VBAT serv. super. soglia alta → relè attivato 🛑"));
       //beep(3);
       SemaforoVerdeOff();
       SemaforoRossoOn();      
@@ -700,11 +708,11 @@ void EseguiVerificaBatterie(){
 
 void setup() {
 if (Test_a_banco){
-  int ADC_BAT_SERVIZI_PIN = A3;
-  int ADC_BAT_MOTORE_PIN = A2;
+  ADC_BAT_SERVIZI_PIN = A3;
+  ADC_BAT_MOTORE_PIN = A2;
 } else {
- int ADC_BAT_SERVIZI_PIN = A2;
- int ADC_BAT_MOTORE_PIN = A3;
+ ADC_BAT_SERVIZI_PIN = A2;
+ ADC_BAT_MOTORE_PIN = A3;
 }  
 
 
@@ -859,22 +867,22 @@ void Acquisisce_e_Stampa_Analogiche(){
     trimmer_soglia_alta_volt = trimmer_soglia_alta_bit * VREF / 1023.0 * (R1 + R2) / R2;
     
     
-    vV_SERVIZvizi_volt = adc_servizi_bit * VREF / 1023.0 * (R1 + R2) / R2;
-    vV_AVVIAMore_volt = adc_motore_bit * VREF / 1023.0 * (R1 + R2) / R2;
+    batt_servizi_volt = adc_servizi_bit * VREF / 1023.0 * (R1 + R2) / R2;
+    batt_motore_volt = adc_motore_bit * VREF / 1023.0 * (R1 + R2) / R2;
     
     //debug2
-    //Serial.print(vV_SERVIZvizi_volt); Serial.print(" "); Serial.print(Calibrazione_servizi);  Serial.print(" ");  
-    vV_SERVIZvizi_volt = vV_SERVIZvizi_volt * Calibrazione_servizi;
-    //Serial.print(vV_SERVIZvizi_volt); Serial.print(" ");
+    //Serial.print(batt_servizi_volt); Serial.print(" "); Serial.print(Calibrazione_servizi);  Serial.print(" ");  
+    batt_servizi_volt = batt_servizi_volt * Calibrazione_servizi;
+    //Serial.print(batt_servizi_volt); Serial.print(" ");
 
    //debug2
-    //Serial.print(vV_AVVIAMore_volt); Serial.print(" "); Serial.print(Calibrazione_motore);  Serial.print(" ");  
-    vV_AVVIAMore_volt = vV_AVVIAMore_volt * Calibrazione_motore;
-    //Serial.print(vV_AVVIAMore_volt); Serial.print(" "); 
+    //Serial.print(batt_motore_volt); Serial.print(" "); Serial.print(Calibrazione_motore);  Serial.print(" ");  
+    batt_motore_volt = batt_motore_volt * Calibrazione_motore;
+    //Serial.print(batt_motore_volt); Serial.print(" "); 
 
 
-//    vV_SERVIZvizi_volt = leggiTensione(ADC_BAT_SERVIZI_PIN, Calibrazione_servizi);
- //   vV_AVVIAMore_volt  = leggiTensione(ADC_BAT_MOTORE_PIN, Calibrazione_motore);
+//    batt_servizi_volt = leggiTensione(ADC_BAT_SERVIZI_PIN, Calibrazione_servizi);
+ //   batt_motore_volt  = leggiTensione(ADC_BAT_MOTORE_PIN, Calibrazione_motore);
 
 
   int stato2 ;
@@ -884,27 +892,27 @@ void Acquisisce_e_Stampa_Analogiche(){
 
     Serial.print(F("⚙️ S_ALTA "));Serial.print(trimmer_soglia_alta_volt);Serial.print(F("; "));
     Serial.print(F("⚙️ S_BASSA "));Serial.print(trimmer_soglia_bassa_volt);Serial.print(F("; "));
-    Serial.print(F("🔋 V_SERVIZ "));Serial.print(vV_SERVIZvizi_volt);Serial.print(F("; "));
-    Serial.print(F("🚀 V_AVVIAM "));Serial.print(vV_AVVIAMore_volt);Serial.print(F("; "));
+    Serial.print(F("🔋 V_SERVIZ "));Serial.print(batt_servizi_volt);Serial.print(F("; "));
+    Serial.print(F("🚀 V_AVVIAM "));Serial.print(batt_motore_volt);Serial.print(F("; "));
 
     bluetooth.print(F("⚙️ S_ALTA "));bluetooth.print(trimmer_soglia_alta_volt);bluetooth.print(F("; "));
     bluetooth.print(F("⚙️ S_BASSA "));bluetooth.print(trimmer_soglia_bassa_volt);bluetooth.print(F("; "));
-    bluetooth.print(F("🔋 V_SERVIZ "));bluetooth.print(vV_SERVIZvizi_volt);bluetooth.print(F("; "));
-    bluetooth.print(F("🚀 V_AVVIAM "));bluetooth.print(vV_AVVIAMore_volt);bluetooth.println(F("; "));
+    bluetooth.print(F("🔋 V_SERVIZ "));bluetooth.print(batt_servizi_volt);bluetooth.print(F("; "));
+    bluetooth.print(F("🚀 V_AVVIAM "));bluetooth.print(batt_motore_volt);bluetooth.print(F("; "));
 
   } else {
 
     Serial.println(F("--------------------------"));
     Serial.print(F("⚙️ Trimmer soglia alta "));Serial.print(trimmer_soglia_alta_bit);Serial.print(F(" BIT; "));Serial.print(trimmer_soglia_alta_volt);Serial.println(F(" VOLT; "));
     Serial.print(F("⚙️ Trimmer soglia bassa "));Serial.print(trimmer_soglia_bassa_bit);Serial.print(F(" BIT; "));Serial.print(trimmer_soglia_bassa_volt);Serial.println(F(" VOLT; "));
-    Serial.print(F("🔋 Batteria servizi "));Serial.print(adc_servizi_bit);Serial.print(F(" BIT; "));Serial.print(vV_SERVIZvizi_volt);Serial.println(F(" VOLT; "));
-    Serial.print(F("🚀 Batteria motore "));Serial.print(adc_motore_bit);Serial.print(F(" BIT; "));Serial.print(vV_AVVIAMore_volt);Serial.println(F(" VOLT; "));
+    Serial.print(F("🔋 Batteria servizi "));Serial.print(adc_servizi_bit);Serial.print(F(" BIT; "));Serial.print(batt_servizi_volt);Serial.println(F(" VOLT; "));
+    Serial.print(F("🚀 Batteria motore "));Serial.print(adc_motore_bit);Serial.print(F(" BIT; "));Serial.print(batt_motore_volt);Serial.println(F(" VOLT; "));
 
     bluetooth.println(F("--------------------------"));
     bluetooth.print(F("⚙️ Trimmer soglia alta "));bluetooth.print(trimmer_soglia_alta_bit);bluetooth.print(F(" BIT; "));bluetooth.print(trimmer_soglia_alta_volt);bluetooth.println(F(" VOLT; "));
     bluetooth.print(F("⚙️ Trimmer soglia bassa "));bluetooth.print(trimmer_soglia_bassa_bit);bluetooth.print(F(" BIT; "));bluetooth.print(trimmer_soglia_bassa_volt);bluetooth.println(F(" VOLT; "));
-    bluetooth.print(F("🔋 Batteria servizi "));bluetooth.print(adc_servizi_bit);bluetooth.print(F(" BIT; "));bluetooth.print(vV_SERVIZvizi_volt);bluetooth.println(F(" VOLT; "));
-    bluetooth.print(F("🚀 Batteria motore "));bluetooth.print(adc_motore_bit);bluetooth.print(F(" BIT; "));bluetooth.print(vV_AVVIAMore_volt);bluetooth.println(F(" VOLT; "));
+    bluetooth.print(F("🔋 Batteria servizi "));bluetooth.print(adc_servizi_bit);bluetooth.print(F(" BIT; "));bluetooth.print(batt_servizi_volt);bluetooth.println(F(" VOLT; "));
+    bluetooth.print(F("🚀 Batteria motore "));bluetooth.print(adc_motore_bit);bluetooth.print(F(" BIT; "));bluetooth.print(batt_motore_volt);bluetooth.println(F(" VOLT; "));
 
   }
     
