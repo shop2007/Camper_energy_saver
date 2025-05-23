@@ -1,0 +1,28 @@
+Arduino NANO: Calibrazione convertitori AD:
+Ho due tensioni analogiche (batterie che vanno da 9 a 16volt) 
+float vbat_servizi_volt; // = adc_vbat_servizi_bit * VREF / 1023.0 * (R1 + R2) / R2;
+float vbat_motore_volt; // = adc_vbat_servizi_bit * VREF / 1023.0 * (R1 + R2) / R2;
+
+Sono ottenute leggendo l'input analogico
+int VBAT_SERVIZI_PIN = A3;
+int VBAT_MOTORE_PIN = A2;
+
+Il valore di tensione viene letto usando un partitore di tensione R1 R2 che riporta il 12 volt in ingrasso a 2,97
+
+const float R1 = 10000.0;
+const float R2 = 3300.0;
+const float VREF = 5.0;
+
+La formula per leggere le tensioni è
+    vbat_servizi_volt = adc_vbat_servizi_bit * VREF / 1023.0 * (R1 + R2) / R2;
+    vbat_motore_volt = adc_vbat_motore_bit * VREF / 1023.0 * (R1 + R2) / R2;
+	
+Siccome la precisione non è elevatissima vorrei correggere questi due valori con due fattori di calibrazione
+float Calibrazione_servizi = 1.0012
+float Calibrazione_motore = 0.998
+
+La calibrazione la farei leggendo due trimmer che sono collegati agli ingressi A0 ed A1.
+Tuttavia i valori di calibraione possono essere corretti solo lanciando una procedura Calibrazione() e poi salvati in eeprom
+
+Ovviamente all'avvio i valori di Calibrazione_servizi e Calibrazione_motore vengono copiati in ram leggendo la eeprom
+
