@@ -49,11 +49,10 @@
       "conflict_shadows",
       "shapes"
     ],
-    "visible_layers": "00000000_00000000_0fffffff_ffffffff",
+    "visible_layers": "ffffffff_ffffffff_ffffffff_ffffffff",
     "zone_display_mode": 0
   },
   "git": {
-    "repo_password": "",
     "repo_type": "",
     "repo_username": "",
     "ssh_key": ""
@@ -80,24 +79,7 @@
   },
   "open_jobsets": [],
   "project": {
-<<<<<<< HEAD
-    "files": [
-      {
-        "name": "Camper_Energy_Saver.kicad_sch",
-        "open": false,
-        "window": {
-          "display": 0,
-          "maximized": true,
-          "pos_x": -8,
-          "pos_y": -8,
-          "size_x": 1696,
-          "size_y": 1026
-        }
-      }
-    ]
-=======
     "files": []
->>>>>>> 69a10576d05f17ab632fbc5003f4f957aaeb6f53
   },
   "schematic": {
     "selection_filter": {
