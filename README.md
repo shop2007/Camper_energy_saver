@@ -1,86 +1,34 @@
 # Camper Energy Saver
 
-**Camper Energy Saver** è un sistema elettronico pensato per ottimizzare l'uso dell'energia elettrica a bordo di un camper. Il progetto permette di monitorare in tempo reale corrente e tensione della batteria, proteggere i carichi in caso di sovracorrente, inviare notifiche via SMS e testare l’impianto tramite un menù guidato.
+**Camper Energy Saver** è un sistema di gestione automatica della ricarica solare nei camper. Il dispositivo controlla la tensione della **batteria servizi** e, quando questa è completamente carica, **commuta il caricatore solare** verso la **batteria di avviamento**, evitando lo scaricamento di quest'ultima durante le soste prolungate.
+
+Lo stato del sistema viene trasmesso in tempo reale tramite **Bluetooth (HC-05)** a uno smartphone Android tramite l’app gratuita **“Bluetooth Terminal”**.
 
 ---
 
 ## ⚙️ Funzionalità principali
 
-- Lettura di corrente e tensione con sensore LEM
-- Gestione soglia corrente per protezione sovraccarichi
-- Controllo automatico di un relè di scollegamento carico
-- Display LCD I2C 16x2 per visualizzazione locale
-- Integrazione con modulo GSM SIM800 per comandi e notifiche SMS
-- Comandi remoti: stato, reset, attivazione test, gestione rubrica
-- Menu di collaudo guidato (test 1.A, 1.B ecc.)
-- Dati persistenti su EEPROM (rubrica, soglie, contatori)
-- Watchdog per sicurezza operativa
+- Monitoraggio continuo della **tensione batteria servizi**
+- Commutazione automatica della carica solare:
+  - Priorità alla batteria servizi
+  - Passaggio alla batteria motore quando la batteria servizi è carica
+- Segnalazione dello stato via **Bluetooth (HC-05)**
+- Compatibilità con l'app Android **Bluetooth Terminal**
+- Configurazione soglie e pin semplice tramite codice
 
 ---
 
 ## 🧰 Componenti hardware richiesti
 
-- **Arduino Uno / Nano (ATmega328)**
-- **Sensore di corrente LEM** (es. HASS50)
-- **Modulo SIM800L GSM**
-- **Display LCD 16x2 con interfaccia I2C**
-- **Relè 5V**
-- **Trimmer** per lettura tensione batteria
-- **Resistenze di pull-up/pull-down** dove richiesto
-- **Eventuale pulsante** per menu manuale/test
-- **Alimentazione 12V camper**
+- **Arduino Uno o Nano (ATmega328)**
+- **Modulo relè 12V o 5V** (singolo o doppio)
+- **Modulo Bluetooth HC-05**
+- **Partitore resistivo** per misurare la tensione della batteria servizi
+- **Diodi o relè di potenza** per instradare la carica
+- **Alimentazione 12V** dal circuito servizi del camper
 
 ---
 
-## 🖼️ Schema elettrico
+## 🔌 Schema di funzionamento
 
-<p align="center">
-  <img src="immagini/schema_camper_energy_saver.png" alt="Schema elettrico" width="600">
-</p>
 
-*(Assicurati che l'immagine sia presente nella cartella `immagini/` del repository.)*
-
----
-
-## 📸 Foto prototipo montato
-
-<p align="center">
-  <img src="immagini/foto_montaggio_reale.jpg" alt="Montaggio reale" width="600">
-</p>
-
----
-
-## 🧪 Menù di test e collaudo
-
-Il sistema include un menù test guidato, accessibile da seriale o via SMS:
-
-- **1.A** – Verifica accensione display
-- **1.B** – Verifica lettura corrente
-- **1.C** – Verifica tensione batteria
-- **2.A** – Test attivazione relè
-- **2.B** – Verifica invio SMS test
-
-I comandi disponibili via seriale includono:  
-`AVANTI`, `RIPETI`, `SALTA`, `ESEGUI`  
-oppure selezione diretta con `1.A`, `2.B`, ecc.
-
----
-
-## 📱 Comandi SMS
-
-| Comando             | Descrizione                                           |
-|---------------------|-------------------------------------------------------|
-| `STATO`             | Ricevi stato attuale (corrente, tensione, ecc.)       |
-| `RESET`             | Azzera i contatori di tempo e corrente                |
-| `TESTRELE`          | Attiva il relè per pochi secondi per test            |
-| `PIN1234`           | Autenticazione (sostituire 1234 con il PIN impostato) |
-| `HELP`              | Elenco comandi disponibili                            |
-| `AGGIUNGI +39xxxxxx`| Aggiunge numero alla rubrica (solo admin)            |
-
----
-
-## 🔧 Installazione
-
-1. **Clona il progetto**:
-   ```bash
-   git clone https://github.com/shop2007/Camper_energy_saver.git
