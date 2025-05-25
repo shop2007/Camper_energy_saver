@@ -1,30 +1,86 @@
-# Camper_energy_saver
-Quando la batteria della cellula abitativa supera i 13,6V caricata tramite i pannelli solari, mi attiva un relè che mi fa passare la corrente oramai in esubero verso la batteria motore, mantenendola così sempre in carica.
-sketch completo e aggiornato, con:
+# Camper Energy Saver
 
-    Watchdog hardware
-    Rilevamento reset da watchdog
-    Contatore dei reset salvato in EEPROM (2 byte)
-    Beep di notifica al reset da watchdog
-    Controllo tensione batteria ogni 60s
-    Blink LED ogni 1s
-	
-    Comandi seriali:
-        z → azzera contatore
-        r → mostra contatore
+**Camper Energy Saver** è un sistema elettronico pensato per ottimizzare l'uso dell'energia elettrica a bordo di un camper. Il progetto permette di monitorare in tempo reale corrente e tensione della batteria, proteggere i carichi in caso di sovracorrente, inviare notifiche via SMS e testare l’impianto tramite un menù guidato.
 
-    Stampa automatica del contatore ogni 60 secondi
-	
-	
- Esempio output seriale ogni 60s:
-----------
-VBAT (ADC): 734 → 12.00 V
+---
 
-Soglia bassa (A1): 620
+## ⚙️ Funzionalità principali
 
-Soglia alta (A0): 720
+- Lettura di corrente e tensione con sensore LEM
+- Gestione soglia corrente per protezione sovraccarichi
+- Controllo automatico di un relè di scollegamento carico
+- Display LCD I2C 16x2 per visualizzazione locale
+- Integrazione con modulo GSM SIM800 per comandi e notifiche SMS
+- Comandi remoti: stato, reset, attivazione test, gestione rubrica
+- Menu di collaudo guidato (test 1.A, 1.B ecc.)
+- Dati persistenti su EEPROM (rubrica, soglie, contatori)
+- Watchdog per sicurezza operativa
 
-VBAT nella zona neutra → nessuna azione
+---
 
-Contatore reset watchdog attuale: 3	
+## 🧰 Componenti hardware richiesti
 
+- **Arduino Uno / Nano (ATmega328)**
+- **Sensore di corrente LEM** (es. HASS50)
+- **Modulo SIM800L GSM**
+- **Display LCD 16x2 con interfaccia I2C**
+- **Relè 5V**
+- **Trimmer** per lettura tensione batteria
+- **Resistenze di pull-up/pull-down** dove richiesto
+- **Eventuale pulsante** per menu manuale/test
+- **Alimentazione 12V camper**
+
+---
+
+## 🖼️ Schema elettrico
+
+<p align="center">
+  <img src="immagini/schema_camper_energy_saver.png" alt="Schema elettrico" width="600">
+</p>
+
+*(Assicurati che l'immagine sia presente nella cartella `immagini/` del repository.)*
+
+---
+
+## 📸 Foto prototipo montato
+
+<p align="center">
+  <img src="immagini/foto_montaggio_reale.jpg" alt="Montaggio reale" width="600">
+</p>
+
+---
+
+## 🧪 Menù di test e collaudo
+
+Il sistema include un menù test guidato, accessibile da seriale o via SMS:
+
+- **1.A** – Verifica accensione display
+- **1.B** – Verifica lettura corrente
+- **1.C** – Verifica tensione batteria
+- **2.A** – Test attivazione relè
+- **2.B** – Verifica invio SMS test
+
+I comandi disponibili via seriale includono:  
+`AVANTI`, `RIPETI`, `SALTA`, `ESEGUI`  
+oppure selezione diretta con `1.A`, `2.B`, ecc.
+
+---
+
+## 📱 Comandi SMS
+
+| Comando             | Descrizione                                           |
+|---------------------|-------------------------------------------------------|
+| `STATO`             | Ricevi stato attuale (corrente, tensione, ecc.)       |
+| `RESET`             | Azzera i contatori di tempo e corrente                |
+| `TESTRELE`          | Attiva il relè per pochi secondi per test            |
+| `PIN1234`           | Autenticazione (sostituire 1234 con il PIN impostato) |
+| `HELP`              | Elenco comandi disponibili                            |
+| `AGGIUNGI +39xxxxxx`| Aggiunge numero alla rubrica (solo admin)            |
+
+---
+
+## 🔧 Installazione
+
+1. **Clona il progetto**:
+   ```bash
+   git clone https://github.com/shop2007/Camper_energy_saver.git
