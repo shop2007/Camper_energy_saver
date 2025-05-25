@@ -79,20 +79,7 @@
   },
   "open_jobsets": [],
   "project": {
-    "files": [
-      {
-        "name": "Camper_Energy_Saver.kicad_sch",
-        "open": false,
-        "window": {
-          "display": 0,
-          "maximized": false,
-          "pos_x": 112,
-          "pos_y": 2,
-          "size_x": 1189,
-          "size_y": 1026
-        }
-      }
-    ]
+    "files": []
   },
   "schematic": {
     "selection_filter": {

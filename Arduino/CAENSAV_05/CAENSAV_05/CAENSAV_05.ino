@@ -1,8 +1,17 @@
-String Versione = "CAENSAV_04";
+String Versione = "CAENSAV_05";
 /*
 Al reset si accende semaforo rosso
 Quando lampeggia velocemente il semaforo giallo è nel Menù
 Quando lampeggia una volta al secondo è in RUN normale
+
+due beep tornato ai servizi
+tre bip passato al morore
+
+bluetoot lampeggia: attende connessione
+bluetooth fisso connesso
+
+jumper D4 sinistro = rele ogni secondo, se inseriro, oppure ogni 10 secondi
+jumper d2 se inserito stampa normale se inserito, oppure stampa anche adc per debug
 
 ******************************************
 PROCEDURA DI CALIBRAZIONE
@@ -62,15 +71,15 @@ A7
 #include <EEPROM.h>
 #include <SoftwareSerial.h>
 SoftwareSerial bluetooth(12, 11); // RX, TX
-
+bool Beep_Status = false; //beep al cmbio status
 bool Silenzioso = false;
 // Pin definitions
 const int RELAY_PIN = 6;
 
 const int BUZZER_PIN = 2;
 
-const int JUMPER_LEDD4 = 3;
-const int JUMPER_LEDD2 = 10;
+const int JUMPER_LEDD4 = 3; //relè ogni secondo se inserito
+const int JUMPER_LEDD2 = 10; //stampa estesa se inserito
 
 
 const int LED_SEM_VERDE_PIN = 7;
@@ -416,7 +425,7 @@ void Action5(){
   if (stato == LOW) {
     Serial.println(F("INSERITO azione relay ogni secondo"));
   } else {
-    Serial.println(F("MANCANTE azione relay ogni 60 secondi"));
+    Serial.println(F("MANCANTE azione relay ogni 0 secondi"));
   }
 
   stato = digitalRead(JUMPER_LEDD2);
@@ -701,15 +710,33 @@ void StampaStato(){
 void EseguiVerificaBatterie(){
   
   if (adc_servizi_bit < trimmer_soglia_bassa_bit) {
-      Relay_Status = false;
+      //gestisce il beep una sola volta
+      if (Beep_Status==true){
+        Beep_Status = false;
+        beep(2); //lo fa solo una volta ogni cambio status
+      }
+      //
+      Relay_Status = false;      
       digitalWrite(RELAY_PIN, LOW);
       Serial.println(F("VBAT serv. inf. soglia bassa → relè disattivato ✅"));
       bluetooth.println(F("VBAT serv. inf. soglia bassa → relè disattivato ✅"));
       //beep(2);
       SemaforoVerdeOn();
       SemaforoRossoOff();
+      //
+
+      
+
+
   } else if (adc_servizi_bit > trimmer_soglia_alta_bit) {
+      //gestisce il beep una sola volta
+      if (Beep_Status==false){
+        Beep_Status = true;
+        beep(3); //lo fa solo una volta ogni cambio status
+      }
+      //
       Relay_Status = true;
+      Beep_Status=true;
       digitalWrite(RELAY_PIN, HIGH);
       Serial.println(F("VBAT serv. super. soglia alta → relè attivato 🛑"));
       bluetooth.println(F("VBAT serv. super. soglia alta → relè attivato 🛑"));
@@ -821,7 +848,7 @@ contatore wdog in eeprom eliminato, non funziona, viene azzerato dal boot di ard
 //*****************************end setup
 
 void loop() {
-\
+  int statojp4 ;
 
   
   wdt_reset(); // Resetta watchdog
@@ -831,7 +858,12 @@ void loop() {
 
 
   //batterie da testare?
-  if ((SecondiVerificaBatterie > 0) && (ContaSecondi % SecondiVerificaBatterie == 0) && (ContaSecondi != 0)) {
+  statojp4 = digitalRead(JUMPER_LEDD4);
+  // Se il pulsante è premuto (pin collegato a GND), stato sarà LOW
+  //Serial.print(F("Jumper D4 - "));
+  if (statojp4 == LOW) {
+    //Serial.println(F("INSERITO azione relay ogni secondo"));
+    if ((SecondiVerificaBatterie > 0) && (ContaSecondi % 1 == 0) && (ContaSecondi != 0)) {
   
     if (ContaSecondi != lastEsecuzione) {
       
@@ -839,6 +871,21 @@ void loop() {
       lastEsecuzione = ContaSecondi;
     }
   }
+  } else {
+    //Serial.println(F("MANCANTE azione relay ogni 10 secondi"));
+    if ((SecondiVerificaBatterie > 0) && (ContaSecondi % SecondiVerificaBatterie == 0) && (ContaSecondi != 0)) {
+  
+    if (ContaSecondi != lastEsecuzione) {
+      
+      EseguiVerificaBatterie();
+      lastEsecuzione = ContaSecondi;
+    }
+  }
+  }
+
+
+
+
 
 
   // Blink LED ogni secondo
