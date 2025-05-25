@@ -1,30 +1,34 @@
-# Camper_energy_saver
-Quando la batteria della cellula abitativa supera i 13,6V caricata tramite i pannelli solari, mi attiva un relè che mi fa passare la corrente oramai in esubero verso la batteria motore, mantenendola così sempre in carica.
-sketch completo e aggiornato, con:
+# Camper Energy Saver
 
-    Watchdog hardware
-    Rilevamento reset da watchdog
-    Contatore dei reset salvato in EEPROM (2 byte)
-    Beep di notifica al reset da watchdog
-    Controllo tensione batteria ogni 60s
-    Blink LED ogni 1s
-	
-    Comandi seriali:
-        z → azzera contatore
-        r → mostra contatore
+**Camper Energy Saver** è un sistema di gestione automatica della ricarica solare nei camper. Il dispositivo controlla la tensione della **batteria servizi** e, quando questa è completamente carica, **commuta il caricatore solare** verso la **batteria di avviamento**, evitando lo scaricamento di quest'ultima durante le soste prolungate.
 
-    Stampa automatica del contatore ogni 60 secondi
-	
-	
- Esempio output seriale ogni 60s:
-----------
-VBAT (ADC): 734 → 12.00 V
+Lo stato del sistema viene trasmesso in tempo reale tramite **Bluetooth (HC-05)** a uno smartphone Android tramite l’app gratuita **“Bluetooth Terminal”**.
 
-Soglia bassa (A1): 620
+---
 
-Soglia alta (A0): 720
+## ⚙️ Funzionalità principali
 
-VBAT nella zona neutra → nessuna azione
+- Monitoraggio continuo della **tensione batteria servizi**
+- Commutazione automatica della carica solare:
+  - Priorità alla batteria servizi
+  - Passaggio alla batteria motore quando la batteria servizi è carica
+- Segnalazione dello stato via **Bluetooth (HC-05)**
+- Compatibilità con l'app Android **Bluetooth Terminal**
+- Configurazione soglie e pin semplice tramite codice
 
-Contatore reset watchdog attuale: 3	
+---
+
+## 🧰 Componenti hardware richiesti
+
+- **Arduino Uno o Nano (ATmega328)**
+- **Modulo relè 12V o 5V** (singolo o doppio)
+- **Modulo Bluetooth HC-05**
+- **Partitore resistivo** per misurare la tensione della batteria servizi
+- **Diodi o relè di potenza** per instradare la carica
+- **Alimentazione 12V** dal circuito servizi del camper
+
+---
+
+## 🔌 Schema di funzionamento
+
 
