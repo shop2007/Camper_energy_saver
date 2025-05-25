@@ -1,6 +1,7 @@
 # Camper Energy Saver
 
 **Camper Energy Saver** è un sistema di gestione automatica della ricarica solare nei camper. Il dispositivo controlla la tensione della **batteria servizi** e, quando questa è completamente carica, **commuta il caricatore solare** verso la **batteria di avviamento**, evitando lo scaricamento di quest'ultima durante le soste prolungate.
+Si possono impostare due soglie per la batteria servizi, quella alta quando il charger solare verrà commutato sulla batteria motore, e quella bassa , quando tutto torna alla batteria servizi.
 
 Lo stato del sistema viene trasmesso in tempo reale tramite **Bluetooth (HC-05)** a uno smartphone Android tramite l’app gratuita **“Bluetooth Terminal”**.
 
