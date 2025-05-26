@@ -1,8 +1,17 @@
-String Versione = "CAENSAV_04";
+String Versione = "Camp_Energ_Sav_11";
 /*
 Al reset si accende semaforo rosso
 Quando lampeggia velocemente il semaforo giallo è nel Menù
 Quando lampeggia una volta al secondo è in RUN normale
+
+due beep tornato ai servizi
+tre bip passato al morore
+
+bluetoot lampeggia: attende connessione
+bluetooth fisso connesso
+
+jumper D4 sinistro = rele ogni secondo, se inseriro, oppure ogni 10 secondi
+jumper d2 se inserito stampa normale se inserito, oppure stampa anche adc per debug
 
 ******************************************
 PROCEDURA DI CALIBRAZIONE
@@ -62,15 +71,15 @@ A7
 #include <EEPROM.h>
 #include <SoftwareSerial.h>
 SoftwareSerial bluetooth(12, 11); // RX, TX
-
-bool Silenzioso = false;
+bool Beep_Status = false; //beep al cmbio status
+bool Silenzioso = true;
 // Pin definitions
 const int RELAY_PIN = 6;
 
 const int BUZZER_PIN = 2;
 
-const int JUMPER_LEDD4 = 3;
-const int JUMPER_LEDD2 = 10;
+const int JUMPER_LEDD4 = 3; //relè ogni secondo se inserito
+const int JUMPER_LEDD2 = 10; //stampa estesa se inserito
 
 
 const int LED_SEM_VERDE_PIN = 7;
@@ -148,10 +157,15 @@ bool Relay_Status = false;
 String inputString = "";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
 bool ExitFromMenu = false;
-char Cestino;
+int Cestino;
 int ledState = LOW;             // ledState used to set the LED
 const int ledPin =  LED_BUILTIN;// the number of the LED pin
 const long interval = 250;           // interval at which to blink (milliseconds)
+
+
+//*******************************************
+//prototipi
+long SerialRead2_parseInt(unsigned long timeout = 1000);
 
 
 
@@ -164,7 +178,7 @@ float mapFloat(long x, long in_min, long in_max, float out_min, float out_max) {
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 // Procedura di calibrazione da trimmer
 void Calibrazione() {
-  Serial.println(F("== Modalità Calibrazione ==\nRegola i trimmer. Premi 'Q' per salvare e uscire."));
+  Serialprint2ln(F("== Modalità Calibrazione ==\nRegola i trimmer. Premi 'Q' per salvare e uscire."));
 
     // uso temporaneamente i trimmer soglie per calibrare
     int adc_trimmer_srv;// = analogRead(TRIMMER_SOGLIA_ALTA_PIN);
@@ -188,8 +202,8 @@ void Calibrazione() {
 
   while (true) {
     // Controllo uscita
-    if (Serial.available()) {
-      char c = Serial.read();
+    if (Serial.available() || bluetooth.available()) {
+      int c = SerialRead2();
       if (c == 'Q') break;
     }
 
@@ -218,23 +232,25 @@ void Calibrazione() {
     volt_calibrata_mot = volt_misurata_mot * Calibrazione_motore;
 
     // Stampa valori
-    Serial.print(F("Calib_serv: "));
-    Serial.print(Calibrazione_servizi);
-    //Serial.print(F(" | Trimmer SRV: "));
-    //Serial.print(volt_trimmer_srv, 3);
-    Serial.print(F(" | Batt SRV: "));
-    Serial.print(volt_misurata_srv, 3);
-    Serial.print(F(" V | Calib SRV: "));
-    Serial.print(volt_calibrata_srv, 4);
+    Serialprint2(F("Calib_serv: "));
+    Serialprint2(Calibrazione_servizi);
+    //Serialprint2(F(" | Trimmer SRV: "));
+    //Serialprint2(volt_trimmer_srv, 3);
+    Serialprint2(F(" | Batt SRV: "));
+    Serialprint2(volt_misurata_srv, 3);
+    Serialprint2(F(" V | Calib SRV: "));
+    Serialprint2(volt_calibrata_srv, 4);
 
-    Serial.print(F(" || Calib_moto: "));
-    Serial.print(Calibrazione_motore);
-    //Serial.print(F(" | Trimmer MOT: "));
-    //Serial.print(volt_trimmer_mot, 3);
-    Serial.print(F(" | Batt MOT: "));
-    Serial.print(volt_misurata_mot, 3);
-    Serial.print(F(" V | Calib MOT: "));
-    Serial.println(volt_calibrata_mot, 4);
+    Serialprint2(F(" || Calib_moto: "));
+    Serialprint2(Calibrazione_motore);
+    //Serialprint2(F(" | Trimmer MOT: "));
+    //Serialprint2(volt_trimmer_mot, 3);
+    Serialprint2(F(" | Batt MOT: "));
+    Serialprint2(volt_misurata_mot, 3);
+    Serialprint2(F(" V | Calib MOT: "));
+    Serialprint2(volt_calibrata_mot, 4);
+    Serialprint2ln("");
+    
 
     delay(1000);
   }
@@ -244,7 +260,7 @@ void Calibrazione() {
   EEPROM_writeFloat(EEPROM_ADDR_volt_calibrata_srv, Calibrazione_servizi);
   EEPROM_writeFloat(EEPROM_ADDR_volt_calibrata_mot, Calibrazione_motore);
 
-  Serial.println(F("Calibrazione completata e salvata in EEPROM."));
+  Serialprint2ln(F("Calibrazione completata e salvata in EEPROM."));
   beep(2);
 }
 
@@ -339,12 +355,12 @@ void Action1(){
   SemaforoRossoOff();
   delay(1000);
   
-  Serial.println(F("Test semaforo eseguito"));
+  Serialprint2ln(F("Test semaforo eseguito"));
   /*
   ex test azzera wdog
   EEPROM.write(EEPROM_ADDR_LOW, 0);
   EEPROM.write(EEPROM_ADDR_HIGH, 0);
-  Serial.println("Contatore reset watchdog azzerato.");
+  Serialprint2ln("Contatore reset watchdog azzerato.");
   */
 }
 //---------------------
@@ -354,14 +370,14 @@ void Action2(){
   digitalWrite(RELAY_PIN, HIGH);
   delay(1000);
   digitalWrite(RELAY_PIN, LOW);
-  Serial.println(F("Test Relay eseguito"));
+  Serialprint2ln(F("Test Relay eseguito"));
 
   /*
   ex era leggi wdog
   uint16_t wdResetCount = EEPROM.read(EEPROM_ADDR_LOW);
   wdResetCount |= (uint16_t)EEPROM.read(EEPROM_ADDR_HIGH) << 8;
-  Serial.print("Contatore reset watchdog attuale: ");
-  Serial.println(wdResetCount);
+  Serialprint2("Contatore reset watchdog attuale: ");
+  Serialprint2ln(wdResetCount);
   */
 }
 //---------------------
@@ -382,25 +398,25 @@ void Action4(){
 
 
     Acquisisce_e_Stampa_Analogiche();
-    Serial.println(F("🔷 Premere 'Q' per uscire"));
+    Serialprint2ln(F("🔷 Premere 'Q' per uscire"));
     delay(250);
     
-    while (Serial.available()) {
+    while (Serial.available() || bluetooth.available()) {
       
-      char c = Serial.read();
+      int c = SerialRead2();
 
       // Ignora fine riga CR o LF
       if (c == '\r' || c == '\n') continue;
 
       // Accetta q o Q per uscire
       if (c == 'q' || c == 'Q') {
-        Serial.println("⏹️ Ricevuto 'q' o 'Q', esco dal ciclo");
+        Serialprint2ln("⏹️ Ricevuto 'q' o 'Q', esco dal ciclo");
         return;
       }
 
       // Opzionale: notifica caratteri non validi
-      Serial.print("❌ Ignorato: ");
-      Serial.println(c);
+      Serialprint2("❌ Ignorato: ");
+      Serialprint2ln(c);
     }
   }
 }    
@@ -412,20 +428,20 @@ void Action5(){
 
   stato = digitalRead(JUMPER_LEDD4);
   // Se il pulsante è premuto (pin collegato a GND), stato sarà LOW
-  Serial.print(F("Jumper D4 - "));
+  Serialprint2(F("Jumper D4 - "));
   if (stato == LOW) {
-    Serial.println(F("INSERITO azione relay ogni secondo"));
+    Serialprint2ln(F("INSERITO azione relay ogni secondo"));
   } else {
-    Serial.println(F("MANCANTE azione relay ogni 60 secondi"));
+    Serialprint2ln(F("MANCANTE azione relay ogni 0 secondi"));
   }
 
   stato = digitalRead(JUMPER_LEDD2);
   // Se il pulsante è premuto (pin collegato a GND), stato sarà LOW
-  Serial.print(F("Jumper D2 - "));
+  Serialprint2(F("Jumper D2 - "));
   if (stato == LOW) {
-    Serial.println(F("INSERITO stampa breve"));
+    Serialprint2ln(F("INSERITO stampa breve"));
   } else {
-    Serial.println(F("MANCANTE stampa completa"));
+    Serialprint2ln(F("MANCANTE stampa completa"));
   }
 
 
@@ -435,7 +451,7 @@ void Action5(){
 
 void Action6(){
   Calibrazione();
-  Serial.println(F("Calibrazione completata e salvata in EEPROM."));
+  Serialprint2ln(F("Calibrazione completata e salvata in EEPROM."));
 }
 //---------------------
 
@@ -460,9 +476,9 @@ void Action10(){
 //---------------------
 //action n. 99
 void Action99(){
-  Serial.println("Action no. 99 selected");
+  Serialprint2ln("Action no. 99 selected");
   delay(2000);
-  Serial.println("Returning to loop'");
+  Serialprint2ln("Returning to loop'");
   delay(2000);
   ExitFromMenu = true;  
 }
@@ -487,14 +503,14 @@ void Menu() {
     TypeMenuList();
 
     //clear the buffer
-    while (Serial.available()) {
-      Cestino = Serial.read();
+    while (Serial.available() || bluetooth.available()) {
+      Cestino = SerialRead2();
     }
 
-    Serial.println(" ");
+    Serialprint2ln(" ");
 
     // here the waiting and LED blinking loop until there is a character on the serial
-    while (!Serial.available()) {
+    while (!Serial.available() || bluetooth.available()) {
       
       //--------------------------------------
       // FAST BLINK MANAGEMENT TO SHOW THAT THE MENU IS WAITING FOR COMMANDS
@@ -516,8 +532,9 @@ void Menu() {
     }
 
     // a character has arrived
-    int CmdMenu = Serial.parseInt();
-    Serial.print("CmdMenu received ");Serial.println(CmdMenu);
+    //int CmdMenu = Serial.parseInt();
+    int CmdMenu = SerialRead2_parseInt();
+    Serialprint2("CmdMenu received ");Serialprint2ln(CmdMenu);
 
   
 
@@ -526,12 +543,12 @@ void Menu() {
 
       //-------------------------------------------------
       case 0:
-        Serial.println("resetting in 1 sec");
+        Serialprint2ln("resetting in 1 sec");
         delay(1000);               // wait for a second
         resetFunc();  //call reset
 
         delay(100);
-        Serial.println("Reset did not work");
+        Serialprint2ln("Reset did not work");
       break;      //-------------------------------------------------
       case 1:
         Action1();
@@ -582,8 +599,8 @@ void Menu() {
       break;
       //-------------------------------------------------
       default:
-        Serial.println("Invalid command. Try again!");
-    } //Serial.available
+        Serialprint2ln("Invalid command. Try again!");
+    } //SerialRead2Available
   } // ExitFromMenu
 } // Menu
 
@@ -597,6 +614,7 @@ void Menu() {
   routine is run between each time loop( ) runs, so using delay inside loop can
   delay response. Multiple bytes of data may be available.
 */
+
 void serialEvent() {
   while (Serial.available()) {
     // get the new byte:
@@ -611,30 +629,50 @@ void serialEvent() {
   }
 }
 
+//NUOVO 
+void serialEvent2() {
+  while (Serial.available() || bluetooth.available()) {
+    int c = SerialRead2();  // legge da Serial o bluetooth
+    
+    if (c != -1) {
+      Serial.print("xxx ");Serial.print(c);Serial.println(" xxx");
+      char inChar = (char)c;
+      inputString += inChar;
+      if (inChar == '\n') {
+        stringComplete = true;
+      }
+    }
+  }
+}
+
+
+
+
+
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 //print the list of available commands
 void TypeMenuList(void){
     //debug=false;
-    Serial.println();
-    Serial.println(F("|************************|"));
-    Serial.println(F("|  ʘ‿ʘ   Menu   (◡_◡)   |"));
-      Serial.print(F("|  Ver. "));Serial.println(Versione);
-    Serial.println(F("|************************|"));
-    Serial.println(F("  0 Reset"));
-    Serial.println(F(" 1 Test Semaforo"));
-    Serial.println(F(" 2 Test Relè"));
-    Serial.println(F(" 3 Attiva Wdog senza resettarlo.. Farà reset"));
-    Serial.println(F(" 4 Lettura continua Trimmer"));
-    Serial.println(F(" 5 Stato JUMPERS"));
-    Serial.println(F(" 6 Calibrazione"));
+    Serialprint2ln("");
+    Serialprint2ln(F("|************************|"));
+    Serialprint2ln(F("|  ʘ‿ʘ   Menu   (◡_◡)   |"));
+      Serialprint2(F("|  Ver. "));Serialprint2ln(Versione);
+    Serialprint2ln(F("|************************|"));
+    Serialprint2ln(F("  0 Reset"));
+    Serialprint2ln(F(" 1 Test Semaforo"));
+    Serialprint2ln(F(" 2 Test Relè"));
+    Serialprint2ln(F(" 3 Attiva Wdog senza resettarlo.. Farà reset"));
+    Serialprint2ln(F(" 4 Lettura continua Trimmer"));
+    Serialprint2ln(F(" 5 Stato JUMPERS"));
+    Serialprint2ln(F(" 6 Calibrazione"));
     /*
-    Serial.println(F(" 7 Action 7"));
-    Serial.println(F(" 8 Action 8"));
-    Serial.println(F(" 9 Action 9"));
-    Serial.println(F(" 10 Action10 "));
-    Serial.println(F(" 11 Action 11"));
+    Serialprint2ln(F(" 7 Action 7"));
+    Serialprint2ln(F(" 8 Action 8"));
+    Serialprint2ln(F(" 9 Action 9"));
+    Serialprint2ln(F(" 10 Action10 "));
+    Serialprint2ln(F(" 11 Action 11"));
     */
-    Serial.println(F(" 99 Return to loop without reset"));
+    Serialprint2ln(F(" 99 Return to loop without reset"));
 }
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
@@ -671,7 +709,7 @@ void StampaOrologio(){
           Minuti, 
           Secondi);
 
-  Serial.println(buffer);
+  Serialprint2ln(buffer);
   bluetooth.println(buffer);
   
 }
@@ -682,15 +720,14 @@ void StampaOrologio(){
 
 void StampaStato(){
 
-  Serial.print(F(" Batterie "));
+  Serialprint2(F(" Batterie "));
   bluetooth.print(F(" Batt. "));
   
   if (Relay_Status){
-    Serial.print(F(" CONNESSE 🛑🛑🛑"));
-    bluetooth.print(F(" CONN.🛑"));
+    Serialprint2(F(" CONNESSE 🛑🛑🛑"));
+
   } else {
-    Serial.print(F(" NON CONNESSE ✅✅✅"));
-    bluetooth.print(F(" DISCON. ✅"));
+    Serialprint2(F(" NON CONNESSE ✅✅✅"));
   }
 
 
@@ -701,26 +738,118 @@ void StampaStato(){
 void EseguiVerificaBatterie(){
   
   if (adc_servizi_bit < trimmer_soglia_bassa_bit) {
-      Relay_Status = false;
+      //gestisce il beep una sola volta
+      if (Beep_Status==true){
+        Beep_Status = false;
+        beep(2); //lo fa solo una volta ogni cambio status
+      }
+      //
+      Relay_Status = false;      
       digitalWrite(RELAY_PIN, LOW);
-      Serial.println(F("VBAT serv. inf. soglia bassa → relè disattivato ✅"));
-      bluetooth.println(F("VBAT serv. inf. soglia bassa → relè disattivato ✅"));
+      Serialprint2ln(F("VBAT serv. inf. soglia bassa → relè disattivato ✅"));
+
       //beep(2);
       SemaforoVerdeOn();
       SemaforoRossoOff();
+      //
+
+      
+
+
   } else if (adc_servizi_bit > trimmer_soglia_alta_bit) {
+      //gestisce il beep una sola volta
+      if (Beep_Status==false){
+        Beep_Status = true;
+        beep(3); //lo fa solo una volta ogni cambio status
+      }
+      //
       Relay_Status = true;
+      Beep_Status=true;
       digitalWrite(RELAY_PIN, HIGH);
-      Serial.println(F("VBAT serv. super. soglia alta → relè attivato 🛑"));
-      bluetooth.println(F("VBAT serv. super. soglia alta → relè attivato 🛑"));
+      Serialprint2ln(F("VBAT serv. super. soglia alta → relè attivato 🛑"));
+
       //beep(3);
       SemaforoVerdeOff();
       SemaforoRossoOn();      
   } else {
-      Serial.println("VBAT nella zona neutra → nessuna azione");
+      Serialprint2ln("VBAT nella zona neutra → nessuna azione");
   }
 }
    
+
+
+
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+ //Versione compatta e potente usando i template C++: 
+ // ti permette di usare una sola funzione per stampare qualsiasi tipo di dato, sia su Serial 
+ // che su bluetooth.
+
+// Funzione template per print
+template <typename T>
+void Serialprint2(T dato) {
+  Serial.print(dato);
+  bluetooth.print(dato);
+}
+
+// Funzione template per println
+template <typename T>
+void Serialprint2ln(T dato) {
+  Serial.println(dato);
+  bluetooth.println(dato);
+}
+
+
+//per i print con due parametri ggiungi un overload specifico per float con precisione:
+
+void Serialprint2(float val, int decimali) {
+  Serial.print(val, decimali);
+  bluetooth.print(val, decimali);
+}
+
+
+//-----------------
+//funzione SerialRead2 che:
+//    Controlla se c'è un carattere disponibile su Serial o bluetooth.
+//   Lo legge e lo restituisce.
+//    Oppure restituisce -1 se nessun carattere è presente.
+int SerialRead2(){
+  if (Serial.available()) {
+    return Serial.read();
+  }
+  if (bluetooth.available()) {
+    return bluetooth.read();
+  }
+  return -1; // Nessun dato disponibile
+}
+
+//-----------------------
+long SerialRead2_parseInt(unsigned long timeout = 1000) {
+  String numStr = "";
+  unsigned long start = millis();
+
+  while (millis() - start < timeout) {
+    if (Serial.available() || bluetooth.available()) {
+      int c = SerialRead2();
+      if (c == -1) continue;
+      char ch = (char)c;
+
+      // Se è cifra o segno meno, lo accetto
+      if (isDigit(ch) || (ch == '-' && numStr.length() == 0)) {
+        numStr += ch;
+        start = millis();  // resetta il timeout dopo ogni carattere valido
+      } 
+      // Se trovo un separatore dopo aver iniziato, esco
+      else if (numStr.length() > 0) {
+        break;
+      }
+    }
+  }
+
+  return numStr.toInt();  // restituisce 0 se stringa vuota o non numerica
+}
+
 
 
 
@@ -749,9 +878,9 @@ if (Test_a_banco){
 
   Serial.begin(115200);
   bluetooth.begin(9600);
-  Serial.println(F("RESET"));
-  Serial.print(F("Nome file: "));
-  Serial.println(__FILE__);
+  Serialprint2ln(F("RESET"));
+  Serialprint2(F("Nome file: "));
+  Serialprint2ln(__FILE__);
 
   // Lettura valori di calibrazione da EEPROM
   Calibrazione_servizi = EEPROM_readFloat(EEPROM_ADDR_volt_calibrata_srv);
@@ -794,7 +923,7 @@ if (Test_a_banco){
 contatore wdog in eeprom eliminato, non funziona, viene azzerato dal boot di arduino
 
   if (resetCause & _BV(WDRF)) {
-    Serial.println("⚠️ Reset da Watchdog!");
+    Serialprint2ln("⚠️ Reset da Watchdog!");
 
     // Leggi contatore 2 byte da EEPROM
     uint16_t wdResetCount = EEPROM.read(EEPROM_ADDR_LOW);
@@ -804,24 +933,25 @@ contatore wdog in eeprom eliminato, non funziona, viene azzerato dal boot di ard
     EEPROM.write(EEPROM_ADDR_LOW, wdResetCount & 0xFF);
     EEPROM.write(EEPROM_ADDR_HIGH, (wdResetCount >> 8) & 0xFF);
 
-    Serial.print("Contatore reset watchdog: ");
-    Serial.println(wdResetCount);
+    Serialprint2("Contatore reset watchdog: ");
+    Serialprint2ln(wdResetCount);
 
     beep(5); // Beep di avviso
   } else {
-    Serial.println("Sistema avviato normalmente.");
+    Serialprint2ln("Sistema avviato normalmente.");
   }
   */
 
   wdt_enable(WDTO_2S); // Riattiva watchdog
   Acquisisce_e_Stampa_Analogiche();
   EseguiVerificaBatterie();
+
 }
 
 //*****************************end setup
 
 void loop() {
-\
+  int statojp4 ;
 
   
   wdt_reset(); // Resetta watchdog
@@ -831,7 +961,12 @@ void loop() {
 
 
   //batterie da testare?
-  if ((SecondiVerificaBatterie > 0) && (ContaSecondi % SecondiVerificaBatterie == 0) && (ContaSecondi != 0)) {
+  statojp4 = digitalRead(JUMPER_LEDD4);
+  // Se il pulsante è premuto (pin collegato a GND), stato sarà LOW
+  //Serialprint2(F("Jumper D4 - "));
+  if (statojp4 == LOW) {
+    //Serialprint2ln(F("INSERITO azione relay ogni secondo"));
+    if ((SecondiVerificaBatterie > 0) && (ContaSecondi % 1 == 0) && (ContaSecondi != 0)) {
   
     if (ContaSecondi != lastEsecuzione) {
       
@@ -839,6 +974,21 @@ void loop() {
       lastEsecuzione = ContaSecondi;
     }
   }
+  } else {
+    //Serialprint2ln(F("MANCANTE azione relay ogni 10 secondi"));
+    if ((SecondiVerificaBatterie > 0) && (ContaSecondi % SecondiVerificaBatterie == 0) && (ContaSecondi != 0)) {
+  
+    if (ContaSecondi != lastEsecuzione) {
+      
+      EseguiVerificaBatterie();
+      lastEsecuzione = ContaSecondi;
+    }
+  }
+  }
+
+
+
+
 
 
   // Blink LED ogni secondo
@@ -854,19 +1004,22 @@ void loop() {
     StampaOrologio();
 
     if (debug){
-      Serial.print(F("Debug attivo"));
-      Serial.print(F("; ContaSecondi=")); Serial.print(ContaSecondi);
-      Serial.print(F("; SecondiVerificaBatterie=")); Serial.print(SecondiVerificaBatterie);
-      Serial.print(F("; lastEsecuzione=")); Serial.print(lastEsecuzione); 
-      Serial.println();
+      Serialprint2(F("Debug attivo"));
+      Serialprint2(F("; ContaSecondi=")); Serialprint2(ContaSecondi);
+      Serialprint2(F("; SecondiVerificaBatterie=")); Serialprint2(SecondiVerificaBatterie);
+      Serialprint2(F("; lastEsecuzione=")); Serialprint2(lastEsecuzione); 
+      Serialprint2ln("");
     }
 
   }
 
+
+
+  void Serialevent2();
   // print the string when a newline arrives:
   if (stringComplete) {
     inputString.trim();
-    Serial.println(inputString);
+    Serialprint2ln(inputString);
     //parse commands
     if ( (inputString.substring(0, 4) ) == "Menu" ) {
       Menu();
@@ -895,14 +1048,14 @@ void Acquisisce_e_Stampa_Analogiche(){
     batt_motore_volt = adc_motore_bit * VREF / 1023.0 * (R1 + R2) / R2;
     
     //debug2
-    //Serial.print(batt_servizi_volt); Serial.print(" "); Serial.print(Calibrazione_servizi);  Serial.print(" ");  
+    //Serialprint2(batt_servizi_volt); Serialprint2(" "); Serialprint2(Calibrazione_servizi);  Serialprint2(" ");  
     batt_servizi_volt = batt_servizi_volt * Calibrazione_servizi;
-    //Serial.print(batt_servizi_volt); Serial.print(" ");
+    //Serialprint2(batt_servizi_volt); Serialprint2(" ");
 
    //debug2
-    //Serial.print(batt_motore_volt); Serial.print(" "); Serial.print(Calibrazione_motore);  Serial.print(" ");  
+    //Serialprint2(batt_motore_volt); Serialprint2(" "); Serialprint2(Calibrazione_motore);  Serialprint2(" ");  
     batt_motore_volt = batt_motore_volt * Calibrazione_motore;
-    //Serial.print(batt_motore_volt); Serial.print(" "); 
+    //Serialprint2(batt_motore_volt); Serialprint2(" "); 
 
 
 //    batt_servizi_volt = leggiTensione(ADC_BAT_SERVIZI_PIN, Calibrazione_servizi);
@@ -914,29 +1067,18 @@ void Acquisisce_e_Stampa_Analogiche(){
   // Se il pulsante è premuto (pin collegato a GND), stato sarà LOW
   if (stato2 == LOW) {
 
-    Serial.print(F("⚙️ S_ALTA "));Serial.print(trimmer_soglia_alta_volt);Serial.print(F("; "));
-    Serial.print(F("⚙️ S_BASSA "));Serial.print(trimmer_soglia_bassa_volt);Serial.print(F("; "));
-    Serial.print(F("🔋 V_SERVIZ "));Serial.print(batt_servizi_volt);Serial.print(F("; "));
-    Serial.print(F("🚀 V_AVVIAM "));Serial.print(batt_motore_volt);Serial.print(F("; "));
-
-    bluetooth.print(F("⚙️ S_ALTA "));bluetooth.print(trimmer_soglia_alta_volt);bluetooth.print(F("; "));
-    bluetooth.print(F("⚙️ S_BASSA "));bluetooth.print(trimmer_soglia_bassa_volt);bluetooth.print(F("; "));
-    bluetooth.print(F("🔋 V_SERVIZ "));bluetooth.print(batt_servizi_volt);bluetooth.print(F("; "));
-    bluetooth.print(F("🚀 V_AVVIAM "));bluetooth.print(batt_motore_volt);bluetooth.print(F("; "));
+    Serialprint2(F("⚙️ S_ALTA "));Serialprint2(trimmer_soglia_alta_volt);Serialprint2(F("; "));
+    Serialprint2(F("⚙️ S_BASSA "));Serialprint2(trimmer_soglia_bassa_volt);Serialprint2(F("; "));
+    Serialprint2(F("🔋 V_SERVIZ "));Serialprint2(batt_servizi_volt);Serialprint2(F("; "));
+    Serialprint2(F("🚀 V_AVVIAM "));Serialprint2(batt_motore_volt);Serialprint2(F("; "));
 
   } else {
 
-    Serial.println(F("--------------------------"));
-    Serial.print(F("⚙️ Trimmer soglia alta "));Serial.print(trimmer_soglia_alta_bit);Serial.print(F(" BIT; "));Serial.print(trimmer_soglia_alta_volt);Serial.println(F(" VOLT; "));
-    Serial.print(F("⚙️ Trimmer soglia bassa "));Serial.print(trimmer_soglia_bassa_bit);Serial.print(F(" BIT; "));Serial.print(trimmer_soglia_bassa_volt);Serial.println(F(" VOLT; "));
-    Serial.print(F("🔋 Batteria servizi "));Serial.print(adc_servizi_bit);Serial.print(F(" BIT; "));Serial.print(batt_servizi_volt);Serial.println(F(" VOLT; "));
-    Serial.print(F("🚀 Batteria motore "));Serial.print(adc_motore_bit);Serial.print(F(" BIT; "));Serial.print(batt_motore_volt);Serial.println(F(" VOLT; "));
-
-    bluetooth.println(F("--------------------------"));
-    bluetooth.print(F("⚙️ Trimmer soglia alta "));bluetooth.print(trimmer_soglia_alta_bit);bluetooth.print(F(" BIT; "));bluetooth.print(trimmer_soglia_alta_volt);bluetooth.println(F(" VOLT; "));
-    bluetooth.print(F("⚙️ Trimmer soglia bassa "));bluetooth.print(trimmer_soglia_bassa_bit);bluetooth.print(F(" BIT; "));bluetooth.print(trimmer_soglia_bassa_volt);bluetooth.println(F(" VOLT; "));
-    bluetooth.print(F("🔋 Batteria servizi "));bluetooth.print(adc_servizi_bit);bluetooth.print(F(" BIT; "));bluetooth.print(batt_servizi_volt);bluetooth.println(F(" VOLT; "));
-    bluetooth.print(F("🚀 Batteria motore "));bluetooth.print(adc_motore_bit);bluetooth.print(F(" BIT; "));bluetooth.print(batt_motore_volt);bluetooth.println(F(" VOLT; "));
+    Serialprint2ln(F("--------------------------"));
+    Serialprint2(F("⚙️ Trimmer soglia alta "));Serialprint2(trimmer_soglia_alta_bit);Serialprint2(F(" BIT; "));Serialprint2(trimmer_soglia_alta_volt);Serialprint2ln(F(" VOLT; "));
+    Serialprint2(F("⚙️ Trimmer soglia bassa "));Serialprint2(trimmer_soglia_bassa_bit);Serialprint2(F(" BIT; "));Serialprint2(trimmer_soglia_bassa_volt);Serialprint2ln(F(" VOLT; "));
+    Serialprint2(F("🔋 Batteria servizi "));Serialprint2(adc_servizi_bit);Serialprint2(F(" BIT; "));Serialprint2(batt_servizi_volt);Serialprint2ln(F(" VOLT; "));
+    Serialprint2(F("🚀 Batteria motore "));Serialprint2(adc_motore_bit);Serialprint2(F(" BIT; "));Serialprint2(batt_motore_volt);Serialprint2ln(F(" VOLT; "));
 
   }
     
@@ -949,7 +1091,7 @@ void Acquisisce_e_Stampa_Analogiche(){
 void beep(int count) {
   for (int i = 0; i < count; i++) {
     if (Silenzioso){
-      //Serial.print(". ");
+      //Serialprint2(". ");
     } else {
       digitalWrite(BUZZER_PIN, HIGH);
       delay(100);
