@@ -1,5 +1,8 @@
-String Versione = "Camp_Energ_Sav_11";
+String Versione = "Camp_Energ_Sav_15";
 /*
+14 aggiunto calibrazione da tastiera
+15 aggiunto contatore di reset
+
 Al reset si accende semaforo rosso
 Quando lampeggia velocemente il semaforo giallo è nel Menù
 Quando lampeggia una volta al secondo è in RUN normale
@@ -28,7 +31,7 @@ nota: i trimmer sono usati per calibrare e poi torneranno a fare la funzione di 
   Trimmer RV1 destra = soglia alta
 
 
-HARDDWARE MAK_NANO2RL-107
+HARDWARE MAK_NANO2RL-107
 
 arduino
 D0  RISERVATO USB
@@ -121,6 +124,9 @@ unsigned int SecondiVerificaBatterie = 10;       // Intervallo modificabile
 unsigned int lastEsecuzione = 0;           // Ultimo valore di Secondi usato per chiamare la funzione
 
 
+// --- Contatore di reset ---
+unsigned long resetCount = 0; // Contatore di reset come unsigned long
+
 // Coefficienti di calibrazione (caricati da EEPROM)
 float Calibrazione_servizi;
 float Calibrazione_motore;
@@ -128,6 +134,9 @@ float Calibrazione_motore;
 // Indirizzi EEPROM
 const int EEPROM_ADDR_volt_calibrata_srv = 0;
 const int EEPROM_ADDR_volt_calibrata_mot = EEPROM_ADDR_volt_calibrata_srv + sizeof(float);
+// Definisci l'indirizzo per il contatore di reset dopo i dati esistenti
+const int EEPROM_RESET_ADDRESS = EEPROM_ADDR_volt_calibrata_mot + sizeof(float); 
+// Questo metterà il contatore a partire dall'indirizzo 8 (4 per il primo float + 4 per il secondo float)
 
 
 // Partitore valori
@@ -162,11 +171,10 @@ int ledState = LOW;             // ledState used to set the LED
 const int ledPin =  LED_BUILTIN;// the number of the LED pin
 const long interval = 250;           // interval at which to blink (milliseconds)
 
+const long customParseIntTimeout = 1000;
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-//*******************************************
-//prototipi
-long SerialRead2_parseInt(unsigned long timeout = 1000);
-
+// ---
 
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -175,6 +183,91 @@ long SerialRead2_parseInt(unsigned long timeout = 1000);
 float mapFloat(long x, long in_min, long in_max, float out_min, float out_max) {
   return (float)(x - in_min) * (out_max - out_min) / (float)(in_max - in_min) + out_min;
 }
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+void CalibrazioneKeyboard() {
+  Serialprint2ln(F("== Modalità Calibrazione (da tastiera) =="));
+  Serialprint2ln(F("Tasti per calibrare SERVIZI: t/y/u (dim) - i/o/p (aum)"));
+  Serialprint2ln(F("Tasti per calibrare MOTORE : f/g/h (dim) - j/k/l (aum)"));
+  Serialprint2ln(F("Premi 'Q' per salvare e uscire."));
+
+  // Valori iniziali
+  Calibrazione_servizi = 1.000;
+  Calibrazione_motore = 1.000;
+
+  int adc_servizi;
+  int adc_motore;
+  float volt_misurata_srv;
+  float volt_misurata_mot;
+  float volt_calibrata_srv;
+  float volt_calibrata_mot;
+
+  while (true) {
+    // Lettura input da seriale o bluetooth
+    char c = 0;
+    if (Serial.available()) c = Serial.read();
+    if (bluetooth.available()) c = bluetooth.read();
+
+    c = tolower(c); // gestione maiuscole/minuscole
+
+    if (c == 'q') break;
+
+    switch (c) {
+      // SERVIZI
+      case 't': Calibrazione_servizi -= 0.100; break;
+      case 'y': Calibrazione_servizi -= 0.010; break;
+      case 'u': Calibrazione_servizi -= 0.001; break;
+      case 'i': Calibrazione_servizi += 0.001; break;
+      case 'o': Calibrazione_servizi += 0.010; break;
+      case 'p': Calibrazione_servizi += 0.100; break;
+
+      // MOTORE
+      case 'f': Calibrazione_motore -= 0.100; break;
+      case 'g': Calibrazione_motore -= 0.010; break;
+      case 'h': Calibrazione_motore -= 0.001; break;
+      case 'j': Calibrazione_motore += 0.001; break;
+      case 'k': Calibrazione_motore += 0.010; break;
+      case 'l': Calibrazione_motore += 0.100; break;
+    }
+
+    // Lettura batterie
+    adc_servizi = analogRead(ADC_BAT_SERVIZI_PIN);
+    adc_motore  = analogRead(ADC_BAT_MOTORE_PIN);
+
+    volt_misurata_srv = adc_servizi * VREF / 1023.0 * (R1 + R2) / R2;
+    volt_misurata_mot = adc_motore  * VREF / 1023.0 * (R1 + R2) / R2;
+
+    volt_calibrata_srv = volt_misurata_srv * Calibrazione_servizi;
+    volt_calibrata_mot = volt_misurata_mot * Calibrazione_motore;
+
+    // Stampa risultati
+
+    Serialprint2(F("Calib_serv: "));
+    Serialprint2(Calibrazione_servizi, 4);
+    //Serialprint2(F(" | Batt SRV: "));
+    //Serialprint2(volt_misurata_srv, 3);
+    Serialprint2(F(" | Calib SRV: "));
+    Serialprint2(volt_calibrata_srv, 4);
+
+    Serialprint2(F(" T-100/Y-10/U-1 I+1/O+10/P+100 || Calib_moto: "));
+    Serialprint2(Calibrazione_motore, 4);
+    //Serialprint2(F(" | Batt MOT: "));
+    //Serialprint2(volt_misurata_mot, 3);
+    Serialprint2(F(" | Calib MOT: "));
+    Serialprint2(volt_calibrata_mot, 4);
+    Serialprint2ln("   F-100/G-10/H-1 J+1/K+10/L+100 ");
+
+    delay(500);
+  }
+
+  // Salvataggio in EEPROM
+  EEPROM_writeFloat(EEPROM_ADDR_volt_calibrata_srv, Calibrazione_servizi);
+  EEPROM_writeFloat(EEPROM_ADDR_volt_calibrata_mot, Calibrazione_motore);
+
+  Serialprint2ln(F("Calibrazione completata e salvata in EEPROM."));
+  beep(2);
+}
+
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 // Procedura di calibrazione da trimmer
 void Calibrazione() {
@@ -202,9 +295,15 @@ void Calibrazione() {
 
   while (true) {
     // Controllo uscita
-    if (Serial.available() || bluetooth.available()) {
-      int c = SerialRead2();
-      if (c == 'Q') break;
+    if (Serial.available()) {
+      char c = Serial.read();
+      if (c == 'q' || c == 'Q') break;
+    }
+
+    // Controllo uscita
+    if (bluetooth.available()) {
+      char c = bluetooth.read();
+      if (c == 'q' || c == 'Q') break;
     }
 
 
@@ -401,10 +500,9 @@ void Action4(){
     Serialprint2ln(F("🔷 Premere 'Q' per uscire"));
     delay(250);
     
-    while (Serial.available() || bluetooth.available()) {
-      
-      int c = SerialRead2();
-
+    //while (Serial.available()) {
+    while (Serial.available()) { 
+      char c = Serial.read();
       // Ignora fine riga CR o LF
       if (c == '\r' || c == '\n') continue;
 
@@ -418,6 +516,35 @@ void Action4(){
       Serialprint2("❌ Ignorato: ");
       Serialprint2ln(c);
     }
+
+    //while (Serial.available()) {
+    while (bluetooth.available()) { 
+      char c = bluetooth.read();
+      // Ignora fine riga CR o LF
+      if (c == '\r' || c == '\n') continue;
+
+      // Accetta q o Q per uscire
+      if (c == 'q' || c == 'Q') {
+        Serialprint2ln("⏹️ Ricevuto 'q' o 'Q', esco dal ciclo");
+        return;
+      }
+
+      // Opzionale: notifica caratteri non validi
+      Serialprint2("❌ Ignorato: ");
+      Serialprint2ln(c);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
   }
 }    
     
@@ -456,7 +583,8 @@ void Action6(){
 //---------------------
 
 void Action7(){
-
+  CalibrazioneKeyboard();
+  Serialprint2ln(F("Calibrazione completata e salvata in EEPROM."));
 }
 //---------------------
 
@@ -493,6 +621,107 @@ void Action99(){
 void(* resetFunc) (void) = 0; //declare reset function @ address 0
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
+/*
+ * Funzione helper per validare e convertire una stringa in un numero intero.
+ * Controlla se la stringa contiene solo cifre e se il numero rientra nel range 0-999.
+ *
+ * Parametri:
+ * inputString: La stringa da validare e convertire.
+ *
+ * Ritorna:
+ * Il numero intero se valido, altrimenti -1.
+ */
+int validateAndConvert(String inputString) {
+  // Rimuovi spazi bianchi, newline, carriage return all'inizio e alla fine
+  inputString.trim();
+
+  // Se la stringa è vuota dopo il trim, non è un numero valido
+  if (inputString.length() == 0) {
+    return -1;
+  }
+
+  // Controlla che tutti i caratteri siano cifre
+  for (unsigned int i = 0; i < inputString.length(); i++) {
+    if (!isDigit(inputString.charAt(i))) {
+      return -1; // Contiene caratteri non numerici
+    }
+  }
+
+  // Converti la stringa in un intero
+  int num = inputString.toInt();
+
+  // Controlla se il numero rientra nel range desiderato
+  if (num >= 0 && num <= 999) {
+    return num; // Numero valido
+  } else {
+    return -1; // Numero fuori range
+  }
+}
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+int WaitSerialAndBluetooth() {
+  String serialReadString = "";       // Stringa per i dati in ingresso dal Serial Monitor
+  String bluetoothReadString = "";    // Stringa per i dati in ingresso dal Bluetooth
+
+  serialReadString = "";    // Resetta la stringa per il Serial Monitor
+  bluetoothReadString = ""; // Resetta la stringa per il Bluetooth
+
+  Serialprint2ln("\nInserisci un numero (0-999) e premi Invio:");
+
+
+  while (true) { // Loop infinito finché non si riceve un numero valido
+
+    // --- Gestione input da Serial Monitor (USB) ---
+    while (Serial.available()) {
+      char inChar = (char)Serial.read();
+      serialReadString += inChar;
+
+      // Se il carattere è un newline (Invio), processa la stringa
+      if (inChar == '\n') {
+        int num = validateAndConvert(serialReadString);
+        if (num != -1) { // -1 indica un numero non valido
+          Serial.println("Numero ricevuto da Serial Monitor.");
+          return num; // Numero valido, esci dalla funzione
+        } else {
+          Serial.print("Input non valido da Serial Monitor: '");
+          serialReadString.trim();
+          Serial.print(serialReadString); // trim() rimuove spazi, newline, ecc.
+          Serial.println("'. Riprova.");
+          serialReadString = ""; // Resetta per il prossimo input
+          // Potresti voler ri-promuovere l'input qui
+          Serial.println("Inserisci un numero (0-999) e premi Invio:");
+        }
+      }
+    }
+
+    // --- Gestione input da Bluetooth SoftwareSerial ---
+    while (bluetooth.available()) {
+      char inChar = (char)bluetooth.read();
+      bluetoothReadString += inChar;
+
+      // Se il carattere è un newline (Invio), processa la stringa
+      if (inChar == '\n') {
+        int num = validateAndConvert(bluetoothReadString);
+        if (num != -1) { // -1 indica un numero non valido
+          Serial.println("Numero ricevuto da Bluetooth.");
+          bluetooth.print("Ricevuto: ");
+          bluetooth.println(num);
+          return num; // Numero valido, esci dalla funzione
+        } else {
+          Serial.print("Input non valido da Bluetooth: '");
+          bluetoothReadString.trim();
+          Serial.print(bluetoothReadString);
+          Serial.println("'. Riprova.");
+          bluetooth.print("Input non valido. Riprova (0-999): ");
+          bluetoothReadString = ""; // Resetta per il prossimo input
+        }
+      }
+    }
+  }
+}
+
+
+
+
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 void Menu() {
@@ -502,16 +731,8 @@ void Menu() {
 
     TypeMenuList();
 
-    //clear the buffer
-    while (Serial.available() || bluetooth.available()) {
-      Cestino = SerialRead2();
-    }
-
-    Serialprint2ln(" ");
-
-    // here the waiting and LED blinking loop until there is a character on the serial
-    while (!Serial.available() || bluetooth.available()) {
-      
+    int CmdMenu = WaitSerialAndBluetooth();
+      /*
       //--------------------------------------
       // FAST BLINK MANAGEMENT TO SHOW THAT THE MENU IS WAITING FOR COMMANDS
       unsigned long currentMillis = millis();
@@ -525,18 +746,10 @@ void Menu() {
         } else {
           ledState = LOW;
         }
-
         // set the LED with the ledState of the variable:
         digitalWrite(ledPin, ledState);
-      }     
-    }
-
-    // a character has arrived
-    //int CmdMenu = Serial.parseInt();
-    int CmdMenu = SerialRead2_parseInt();
-    Serialprint2("CmdMenu received ");Serialprint2ln(CmdMenu);
-
-  
+      } 
+      */
 
     //process the received command 
 	  switch (CmdMenu){
@@ -605,16 +818,27 @@ void Menu() {
 } // Menu
 
 
-   //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+void bluetoothEvent(){
+  while (bluetooth.available()) {
+    char c = bluetooth.read();
+    // Esempio: Invia al Serial Monitor ciò che ricevi via Bluetooth
+    //Serial.print("Dato ricevuto da bluetooth: ");
+    //Serial.write(c);
+    inputString += c;
+
+    if (c == '\n') {
+      stringComplete = true;
+    }
+  }
+}
 //*******************************************************
-
 /*
   SerialEvent occurs whenever a new data comes in the hardware serial RX. This
   routine is run between each time loop( ) runs, so using delay inside loop can
   delay response. Multiple bytes of data may be available.
 */
-
 void serialEvent() {
   while (Serial.available()) {
     // get the new byte:
@@ -628,26 +852,6 @@ void serialEvent() {
     }
   }
 }
-
-//NUOVO 
-void serialEvent2() {
-  while (Serial.available() || bluetooth.available()) {
-    int c = SerialRead2();  // legge da Serial o bluetooth
-    
-    if (c != -1) {
-      Serial.print("xxx ");Serial.print(c);Serial.println(" xxx");
-      char inChar = (char)c;
-      inputString += inChar;
-      if (inChar == '\n') {
-        stringComplete = true;
-      }
-    }
-  }
-}
-
-
-
-
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 //print the list of available commands
@@ -664,7 +868,8 @@ void TypeMenuList(void){
     Serialprint2ln(F(" 3 Attiva Wdog senza resettarlo.. Farà reset"));
     Serialprint2ln(F(" 4 Lettura continua Trimmer"));
     Serialprint2ln(F(" 5 Stato JUMPERS"));
-    Serialprint2ln(F(" 6 Calibrazione"));
+    Serialprint2ln(F(" 6 Calibrazione con trimmer"));
+    Serialprint2ln(F(" 7 Calibrazione con tastiera"));
     /*
     Serialprint2ln(F(" 7 Action 7"));
     Serialprint2ln(F(" 8 Action 8"));
@@ -709,8 +914,11 @@ void StampaOrologio(){
           Minuti, 
           Secondi);
 
-  Serialprint2ln(buffer);
-  bluetooth.println(buffer);
+  Serial.print(buffer);
+  bluetooth.print(buffer);
+
+  Serialprint2(F(" -> Reset "));
+  Serialprint2ln(resetCount);
   
 }
 
@@ -824,40 +1032,72 @@ int SerialRead2(){
   return -1; // Nessun dato disponibile
 }
 
-//-----------------------
-long SerialRead2_parseInt(unsigned long timeout = 1000) {
-  String numStr = "";
-  unsigned long start = millis();
+/*
+bool SerialRead2Available() {
+  return Serial.available();
+}
+*/
 
-  while (millis() - start < timeout) {
-    if (Serial.available() || bluetooth.available()) {
-      int c = SerialRead2();
-      if (c == -1) continue;
-      char ch = (char)c;
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+/*
+ * Funzione customParseInt: Emula Serial.parseInt() per un oggetto Stream (Serial, SoftwareSerial, ecc.)
+ *
+ * Parametri:
+ * stream: Un riferimento all'oggetto Stream (es. Serial, bluetooth).
+ * Questo permette alla funzione di essere generica per qualsiasi tipo di seriale.
+ *
+ * Ritorna:
+ * Un numero intero parsato dai dati in ingresso, o 0 se non viene trovato un numero
+ * valido entro il timeout o se si verifica un errore.
+ */
+int customParseInt(Stream &stream) {
+  long startTime = millis();
+  String numString = "";
+  bool negative = false;
+  bool parsingNumber = false;
 
-      // Se è cifra o segno meno, lo accetto
-      if (isDigit(ch) || (ch == '-' && numStr.length() == 0)) {
-        numStr += ch;
-        start = millis();  // resetta il timeout dopo ogni carattere valido
-      } 
-      // Se trovo un separatore dopo aver iniziato, esco
-      else if (numStr.length() > 0) {
-        break;
+  while (millis() - startTime < customParseIntTimeout) {
+    if (stream.available()) {
+      char c = stream.read();
+
+      if (!parsingNumber) {
+        // Stiamo ancora cercando il primo carattere numerico o segno
+        if (isDigit(c)) {
+          numString += c;
+          parsingNumber = true;
+        } else if (c == '-') {
+          negative = true;
+          parsingNumber = true; // Iniziamo a parsare un numero (anche se è solo un segno)
+        } else if (c == '+') {
+          parsingNumber = true; // Iniziamo a parsare un numero
+        }
+        // Se non è un numero, '+' o '-', lo ignoriamo e continuiamo a cercare
+      } else {
+        // Abbiamo iniziato a parsare un numero, ora cerchiamo solo cifre
+        if (isDigit(c)) {
+          numString += c;
+        } else {
+          // Trovato un carattere non numerico dopo l'inizio del numero, il numero è completo
+          break;
+        }
       }
     }
   }
 
-  return numStr.toInt();  // restituisce 0 se stringa vuota o non numerica
+  // Conversione della stringa in numero intero
+  if (numString.length() > 0) {
+    long parsedLong = numString.toInt(); // toInt() restituisce 0 se la stringa è vuota o non valida
+    if (negative) {
+      return -parsedLong;
+    } else {
+      return parsedLong;
+    }
+  } else {
+    // Nessun numero trovato o stringa vuota
+    return 0;
+  }
 }
-
-
-
-
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-
-
-
+//************************************************************
 
 void setup() {
 if (Test_a_banco){
@@ -885,6 +1125,20 @@ if (Test_a_banco){
   // Lettura valori di calibrazione da EEPROM
   Calibrazione_servizi = EEPROM_readFloat(EEPROM_ADDR_volt_calibrata_srv);
   Calibrazione_motore  = EEPROM_readFloat(EEPROM_ADDR_volt_calibrata_mot);
+
+  // --- Gestione Contatore di Reset EEPROM ---
+  // Leggi il contatore di reset dalla EEPROM
+  EEPROM.get(EEPROM_RESET_ADDRESS, resetCount);
+  
+  // Incrementa il contatore di reset
+  resetCount++;
+  
+  // Salva il nuovo valore del contatore di reset nella EEPROM
+  EEPROM.put(EEPROM_RESET_ADDRESS, resetCount); 
+
+  Serialprint2(F("Contatore di reset attuale: "));
+  Serialprint2ln(resetCount);
+  
 
   // Se EEPROM è "vuota", valori default
   if (isnan(Calibrazione_servizi)) Calibrazione_servizi = 1.0;
@@ -1013,9 +1267,7 @@ void loop() {
 
   }
 
-
-
-  void Serialevent2();
+  bluetoothEvent();
   // print the string when a newline arrives:
   if (stringComplete) {
     inputString.trim();
