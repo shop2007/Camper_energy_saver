@@ -1468,18 +1468,18 @@ void Acquisisce_e_Stampa_Analogiche(){
   // Se il pulsante è premuto (pin collegato a GND), stato sarà LOW
   if (stato2 == LOW) {
 
-    Serialprint2(F("⚙️ S_ALTA "));Serialprint2(Soglia_Alta_Volt);Serialprint2(F("; "));
-    Serialprint2(F("⚙️ S_BASSA "));Serialprint2(Soglia_Bassa_Volt);Serialprint2(F("; "));
-    Serialprint2(F("🔋 V_SERVIZI "));Serialprint2(batt_servizi_volt);Serialprint2(F("; "));
-    Serialprint2(F("🚀 V_AVVIAM. "));Serialprint2(batt_motore_volt);Serialprint2(F("; "));
+    Serialprint2(F("⚙️ SHI "));Serialprint2(Soglia_Alta_Volt);Serialprint2(F("; "));
+    Serialprint2(F("SLO "));Serialprint2(Soglia_Bassa_Volt);Serialprint2(F("; "));
+    Serialprint2(F("🔋 VSERV "));Serialprint2(batt_servizi_volt);Serialprint2(F("; "));
+    Serialprint2(F(" VAVVI "));Serialprint2(batt_motore_volt);Serialprint2(F("; "));
 
   } else {
 
     Serialprint2ln(F("--------------------------"));
-    Serialprint2(F("⚙️ Trimmer soglia alta "));Serialprint2(Soglia_Alta_Bit);Serialprint2(F(" BIT; "));Serialprint2(Soglia_Alta_Volt);Serialprint2ln(F(" VOLT; "));
-    Serialprint2(F("⚙️ Trimmer soglia bassa "));Serialprint2(Soglia_Bassa_Bit);Serialprint2(F(" BIT; "));Serialprint2(Soglia_Bassa_Volt);Serialprint2ln(F(" VOLT; "));
-    Serialprint2(F("🔋 Batteria servizi "));Serialprint2(adc_servizi_bit);Serialprint2(F(" BIT; "));Serialprint2(batt_servizi_volt);Serialprint2ln(F(" VOLT; "));
-    Serialprint2(F("🚀 Batteria motore "));Serialprint2(adc_motore_bit);Serialprint2(F(" BIT; "));Serialprint2(batt_motore_volt);Serialprint2ln(F(" VOLT; "));
+    Serialprint2(F("⚙️ Soglia alta "));Serialprint2(Soglia_Alta_Bit);Serialprint2(F(" BIT; "));Serialprint2(Soglia_Alta_Volt);Serialprint2ln(F(" VOLT; "));
+    Serialprint2(F("⚙️ Soglia bassa "));Serialprint2(Soglia_Bassa_Bit);Serialprint2(F(" BIT; "));Serialprint2(Soglia_Bassa_Volt);Serialprint2ln(F(" VOLT; "));
+    Serialprint2(F("🔋 Batt. servizi "));Serialprint2(adc_servizi_bit);Serialprint2(F(" BIT; "));Serialprint2(batt_servizi_volt);Serialprint2ln(F(" VOLT; "));
+    Serialprint2(F("🚀 Batt. avviamento "));Serialprint2(adc_motore_bit);Serialprint2(F(" BIT; "));Serialprint2(batt_motore_volt);Serialprint2ln(F(" VOLT; "));
 
   }
     
