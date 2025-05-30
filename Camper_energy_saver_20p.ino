@@ -753,25 +753,25 @@ void FUN037(){
 // COMMENT 
 
 void FUN038(){
-FUN026(F(" 57 Scrive protezione FUN007")); // COMMENT 
+FUN026(F(" S PFF ")); // COMMENT 
 FUN007();
 }
 // COMMENT 
 
 void FUN039(){
-FUN026(F(" 58 Scrive FE FUN006")); // COMMENT 
+FUN026(F(" S PFE ")); // COMMENT 
 FUN006();
 }
 // COMMENT 
 
 void FUN040(){
-FUN026(F(" 59 Verifica protezione FUN008()"));
+FUN026(F(" V P"));
 
 // COMMENT 
 if (FUN008()) {
-Serial.println("System ok, verified, can run");
+Serial.println(" ok");
 } else {
-Serial.println("System not ok, demo mode");
+Serial.println("DM");
 }
 
 }
@@ -1197,9 +1197,9 @@ void FUN007() {
 const int VAR075 = EEPROM.length() - 1; 
 const byte VALUE_TO_WRITE = 0xFF;
 EEPROM.write(VAR075, VALUE_TO_WRITE);
-Serial.print("Scritto 0x");
+Serial.print("S");
 Serial.print(VALUE_TO_WRITE, HEX);
-Serial.print(" all'indirizzo EEPROM: ");
+Serial.print(" A ");
 Serial.println(VAR075);
 }
 
@@ -1217,9 +1217,9 @@ const int VAR075 = EEPROM.length() - 1;
 const byte TARGET_VALUE = 0xFE; // COMMENT 
 
 EEPROM.write(VAR075, TARGET_VALUE);
-Serial.print("Written 0x");
+Serial.print("W");
 Serial.print(TARGET_VALUE, HEX);
-Serial.print(" to EEPROM address: ");
+Serial.print(" A ");
 Serial.println(VAR075);
 }
 
