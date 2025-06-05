@@ -1,6 +1,73 @@
+/*
+14 aggiunto calibrazione da tastiera
+15 aggiunto contatore di reset
+16 aggiunto taratura soglie da tastiera
+17 eliminato stampa continua su calibrazione e soglia ma solo a ogni comando
+18 protezione, se non trova l'ultimo byte della eeprom a FE si resetta dopo un minuto
+19 rimosso commenti multilinea ROTTI e creato funzione loop infinito nascosta
+20 aggiunto finto array che non serve a niente
+
+protezione: 
+  - da menù 
+  - comando 58 per scrivere 0xfe nell'ultima locazione eeprom write0xFEToLastEEPROM() protezione attiva; 
+  - il comando 59 la legge verifyLastEEPROMValue();
+  - comando 57 per scrivere 0xff nell'ultima locazione eeprom write0xFFToLastEEPROM(); test se protezione funziona
+  - ad ogni incremento di ore del timer verifica, se non è 0xfe si blocca, funziona solo un'ora, (debug ogni minuto)
+
+
+Al reset si accende semaforo rosso
+Quando lampeggia velocemente il semaforo giallo è nel Menù
+Quando lampeggia una volta al secondo è in RUN normale
+
+due beep tornato ai servizi
+tre bip passato al morore
+
+bluetoot lampeggia: attende connessione
+bluetooth fisso connesso
+
+jumper D4 sinistro = rele ogni secondo, se inserito, oppure ogni 10 secondi
+jumper d2 se inserito stampa normale se inserito, oppure stampa anche adc per debug
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+PROCEDURA DI CALIBRAZIONE
+
+
+
+HARDWARE MAK_NANO2RL-107
+
+arduino
+D0  RISERVATO USB
+D1  RISERVATO USB
+D2  BUZZER
+D3  LED D4 JUMPER AZIONA OGNI SECONDO (SE INSERITO)
+D4  LED D5 SEMAFORO ROSSO
+D5  
+D6  RELAY
+D7  LED D1 SEMAFORO VERDE
+D8  
+D9  
+D10 LED D2 JUMPER STAMPA DETTAGLIATA (SE TOLTO)
+D11 BLUETOOTH
+D12 BLUETOOTH
+D13 LED D3 SEMAFORO GIALLO
+A0  
+A1  
+A2  
+A3  
+A4  
+A5  
+A6  
+A7  
+
+
+
+
+
+*/
+
 #include <Arduino.h>
 #include <avr/pgmspace.h> // COMMENT 
-String Versione = "Camp_Energ_Sav_20";
+String Versione = "Camp_Energ_Sav_20p";
 // COMMENT 
 
 // COMMENT 
