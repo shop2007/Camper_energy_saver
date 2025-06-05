@@ -205,8 +205,8 @@ const int VAR010 = 4;
 
 int VAR011 = 0;
 
-const int VAR012 = A0;
-const int VAR013 = A1;
+//const int VAR012 = A0;
+//const int VAR013 = A1;
 
 int VAR014 = A2;
 int VAR015 = A3;
@@ -295,8 +295,18 @@ const long VAR054 = 250;           // COMMENT
 const long VAR055 = 1000;
 // COMMENT 
 
-// COMMENT 
-
+void WriteDefaultEEprom(){
+  Calibrazione_servizi = 1.001;
+  EEPROM_writeFloat(EEPROM_ADDR_volt_calibrata_srv, Calibrazione_servizi);
+  Calibrazione_motore = 0.999;
+  EEPROM_writeFloat(EEPROM_ADDR_volt_calibrata_mot, Calibrazione_motore);
+  Soglia_Bassa_Bit = 670; // 
+  EEPROM.put(EEPROM_ADDR_soglia_bassa, Soglia_Bassa_Bit);
+  Soglia_Alta_Bit = 695; // 
+  EEPROM.put(EEPROM_ADDR_soglia_alta,  Soglia_Alta_Bit);
+  resetCount = 22;
+  EEPROM.put(EEPROM_RESET_ADDRESS, resetCount);   
+}
 
 
 // COMMENT 
@@ -792,8 +802,8 @@ FUN026(F("MANCANTE stampa completa"));
 // COMMENT 
 
 void FUN047(){
-// COMMENT 
-// COMMENT 
+// PARAMETRI DI DEFAULT EEPROM 
+WriteDefaultEEprom();
 }
 // COMMENT 
 
