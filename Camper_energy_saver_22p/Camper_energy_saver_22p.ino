@@ -64,7 +64,6 @@ A7
 
 
 */
-
 #include <Arduino.h>
 #include <avr/pgmspace.h> // COMMENT 
 String Versione = "Camp_Energ_Sav_22p";
@@ -165,16 +164,6 @@ volatile unsigned int VAR001 = 0;
  - MLCOM - 
  - MLCOM - 
  - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
 ML-ECOM.END */
 
 
@@ -205,74 +194,74 @@ const int VAR010 = 4;
 
 int VAR011 = 0;
 
-//const int VAR012 = A0;
-//const int VAR013 = A1;
+// COMMENT 
+// COMMENT 
 
-int VAR014 = A2;
-int VAR015 = A3;
-
-
+int VAR012 = A2;
+int VAR013 = A3;
 
 
 
 
-bool VAR016 = false; // COMMENT 
-bool VAR017= false; // COMMENT 
+
+
+bool VAR014 = false; // COMMENT 
+bool VAR015= false; // COMMENT 
 
 
 // COMMENT 
-unsigned long VAR018 = 0;
+unsigned long VAR016 = 0;
 // COMMENT 
-const unsigned long VAR019 = 1000;
+const unsigned long VAR017 = 1000;
 
 
 
 // COMMENT 
+unsigned int VAR018 = 0;
+unsigned int VAR019 = 0;
 unsigned int VAR020 = 0;
 unsigned int VAR021 = 0;
-unsigned int VAR022 = 0;
-unsigned int VAR023 = 0;
 
-unsigned int VAR024 = 0; // COMMENT 
-unsigned int VAR025 = 10;       // COMMENT 
-unsigned int VAR026 = 0;           // COMMENT 
+unsigned int VAR022 = 0; // COMMENT 
+unsigned int VAR023 = 10;       // COMMENT 
+unsigned int VAR024 = 0;           // COMMENT 
 
 
 // COMMENT 
-unsigned int VAR027 = 0; // COMMENT 
+unsigned int VAR025 = 0; // COMMENT 
 
 // COMMENT 
-float VAR028;
-float VAR029;
+float VAR026;
+float VAR027;
 
 // COMMENT 
 // COMMENT 
-const int VAR030 = 0;
-const int VAR031 = VAR030 + sizeof(float);
+const int VAR028 = 0;
+const int VAR029 = VAR028 + sizeof(float);
 // COMMENT 
-const int VAR032 = VAR031 + sizeof(float); 
+const int VAR030 = VAR029 + sizeof(float); 
 // COMMENT 
 // COMMENT 
-const int VAR033 = VAR032 + sizeof(int);  // COMMENT 
-const int VAR034  = VAR033 + sizeof(int); // COMMENT 
+const int VAR031 = VAR030 + sizeof(int);  // COMMENT 
+const int VAR032  = VAR031 + sizeof(int); // COMMENT 
 // COMMENT 
 
 
 
 
 // COMMENT 
-const float VAR035 = 10000.0;
-const float VAR036 = 3300.0;
-const float VAR037 = 5.0;
+const float VAR033 = 10000.0;
+const float VAR034 = 3300.0;
+const float VAR035 = 5.0;
 
+int VAR036; // COMMENT 
+int VAR037; // COMMENT 
 int VAR038; // COMMENT 
 int VAR039; // COMMENT 
-int VAR040; // COMMENT 
-int VAR041; // COMMENT 
+float VAR040; // COMMENT 
+float VAR041; // COMMENT 
 float VAR042; // COMMENT 
 float VAR043; // COMMENT 
-float VAR044; // COMMENT 
-float VAR045; // COMMENT 
 
 
 
@@ -283,36 +272,40 @@ float VAR045; // COMMENT
  - MLCOM - 
 ML-ECOM.END */
 
-bool VAR048 = false;
+bool VAR046 = false;
 String inputString = "";         // COMMENT 
-bool VAR049 = false;  // COMMENT 
-bool VAR050 = false;
-int VAR051;
-int VAR052 = LOW;             // COMMENT 
-const int VAR053 =  LED_BUILTIN;// COMMENT 
-const long VAR054 = 250;           // COMMENT 
+bool VAR047 = false;  // COMMENT 
+bool VAR048 = false;
+int VAR049;
+int VAR050 = LOW;             // COMMENT 
+const int VAR051 =  LED_BUILTIN;// COMMENT 
+const long VAR052 = 250;           // COMMENT 
 
-const long VAR055 = 1000;
+const long VAR053 = 1000;
 // COMMENT 
 
-void WriteDefaultEEprom(){
-  Calibrazione_servizi = 1.001;
-  EEPROM_writeFloat(EEPROM_ADDR_volt_calibrata_srv, Calibrazione_servizi);
-  Calibrazione_motore = 0.999;
-  EEPROM_writeFloat(EEPROM_ADDR_volt_calibrata_mot, Calibrazione_motore);
-  Soglia_Bassa_Bit = 670; // 
-  EEPROM.put(EEPROM_ADDR_soglia_bassa, Soglia_Bassa_Bit);
-  Soglia_Alta_Bit = 695; // 
-  EEPROM.put(EEPROM_ADDR_soglia_alta,  Soglia_Alta_Bit);
-  resetCount = 22;
-  EEPROM.put(EEPROM_RESET_ADDRESS, resetCount);   
+// COMMENT 
+void FUN012(){
+VAR026 = 1.001;
+FUN015(VAR028, VAR026);
+VAR027 = 0.999;
+FUN015(VAR029, VAR027);
+VAR038 = 670; // COMMENT 
+EEPROM.put(VAR031, VAR038);
+VAR039 = 695; // COMMENT 
+EEPROM.put(VAR032,  VAR039);
+VAR025 = 22;
+EEPROM.put(VAR030, VAR025); 
+
 }
 
 
+
+
 // COMMENT 
 
 // COMMENT 
-float FUN036(long x, long in_min, long in_max, float out_min, float out_max) {
+float FUN037(long x, long in_min, long in_max, float out_min, float out_max) {
 return (float)(x - in_min) * (out_max - out_min) / (float)(in_max - in_min) + out_min;
 }
 
@@ -324,7 +317,7 @@ return (float)(x - in_min) * (out_max - out_min) / (float)(in_max - in_min) + ou
 // COMMENT 
 // COMMENT 
 
-void FUN035(int startAddress, int numBytes) {
+void FUN036(int startAddress, int numBytes) {
 for (int i = 0; i < numBytes; i++) {
 // COMMENT 
 if (i % 16 == 0) {
@@ -353,15 +346,21 @@ Serial.println(); // COMMENT
 }
 // COMMENT 
 
-void FUN012(){
-FUN031("ADR Calbraz. Servizi: ");FUN031(VAR030);FUN031(" -> ");FUN026(VAR028);
-FUN031("ADR Calbraz. Motore: ");FUN031(VAR031);FUN031(" -> ");FUN026(VAR029);
-FUN031("ADR Counter Reset: ");FUN031(VAR032);FUN031(" -> ");FUN026(VAR027);
-FUN031("ADR Soglia Bassa: ");FUN031(VAR033);FUN031(" -> ");FUN026(VAR040);
-FUN031("ADR Soglia Alta: ");FUN031(VAR034);FUN031(" -> ");FUN026(VAR041);
+void FUN013(){
+VAR026 = FUN018(VAR028);
+VAR027  = FUN018(VAR029);
+EEPROM.get(VAR030, VAR025);
+EEPROM.get(VAR031, VAR038);
+EEPROM.get(VAR032,  VAR039);
+
+FUN032("ADR Calbraz. Servizi: ");FUN032(VAR028);FUN032(" -> ");FUN027(VAR026);
+FUN032("ADR Calbraz. Motore: ");FUN032(VAR029);FUN032(" -> ");FUN027(VAR027);
+FUN032("ADR Counter Reset: ");FUN032(VAR030);FUN032(" -> ");FUN027(VAR025);
+FUN032("ADR Soglia Bassa: ");FUN032(VAR031);FUN032(" -> ");FUN027(VAR038);
+FUN032("ADR Soglia Alta: ");FUN032(VAR032);FUN032(" -> ");FUN027(VAR039);
 
 // COMMENT 
-FUN035(0, 64); // COMMENT 
+FUN036(0, 64); // COMMENT 
 
 }
 
@@ -380,47 +379,47 @@ FUN035(0, 64); // COMMENT
  - MLCOM - 
 ML-ECOM.END */
 void FUN002() {
-FUN026(F("== Modalità Calibrazione Soglie (da tastiera) =="));
-FUN026(F("Soglia BASSA: T-100/Y-10/U-1 I+1/O+10/P+100 bit"));
-FUN026(F("Soglia ALTA : F-100/G-10/H-1 J+1/K+10/L+100 bit"));
-FUN026(F("Premi 'Q' per salvare e uscire."));
+FUN027(F("== Modalità Calibrazione Soglie (da tastiera) =="));
+FUN027(F("Soglia BASSA: T-100/Y-10/U-1 I+1/O+10/P+100 bit"));
+FUN027(F("Soglia ALTA : F-100/G-10/H-1 J+1/K+10/L+100 bit"));
+FUN027(F("Premi 'Q' per salvare e uscire."));
 
 // COMMENT 
 // COMMENT 
 
-float VAR042;
-float VAR043;
+float VAR040;
+float VAR041;
 
 while (true) {
 // COMMENT 
-VAR040 = constrain(VAR040, 0, 1023);
-VAR041 = constrain(VAR041, 0, 1023);
+VAR038 = constrain(VAR038, 0, 1023);
+VAR039 = constrain(VAR039, 0, 1023);
 
-VAR042 = VAR040 * VAR037 / 1023.0 * (VAR035 + VAR036) / VAR036;
-VAR043  = VAR041  * VAR037 / 1023.0 * (VAR035 + VAR036) / VAR036;
-
-// COMMENT 
-FUN031(F("BASSA: "));
-FUN031(VAR040);
-FUN031(F("bit ("));
-FUN031(VAR042, 2); // COMMENT 
-FUN031(F(" V) | ALTA: "));
-FUN031(VAR041);
-FUN031(F("bit ("));
-FUN031(VAR043, 2);
-FUN031(F(" V) | Cmd> ")); // COMMENT 
-
-
+VAR040 = VAR038 * VAR035 / 1023.0 * (VAR033 + VAR034) / VAR034;
+VAR041  = VAR039  * VAR035 / 1023.0 * (VAR033 + VAR034) / VAR034;
 
 // COMMENT 
-char VAR056;
+FUN032(F("BASSA: "));
+FUN032(VAR038);
+FUN032(F("bit ("));
+FUN032(VAR040, 2); // COMMENT 
+FUN032(F(" V) | ALTA: "));
+FUN032(VAR039);
+FUN032(F("bit ("));
+FUN032(VAR041, 2);
+FUN032(F(" V) | Cmd> ")); // COMMENT 
+
+
+
+// COMMENT 
+char VAR054;
 while (true) {  // COMMENT 
-VAR056 = 0; // COMMENT 
+VAR054 = 0; // COMMENT 
 
 if (Serial.available()) {
-VAR056 = Serial.read();
+VAR054 = Serial.read();
 } else if (bluetooth.available()) {
-VAR056 = bluetooth.read();
+VAR054 = bluetooth.read();
 }
 
 // COMMENT 
@@ -428,7 +427,7 @@ VAR056 = bluetooth.read();
 // COMMENT 
 // COMMENT 
 // COMMENT 
-if (VAR056 != 0 && VAR056 != '\r' && VAR056 != '\n') {
+if (VAR054 != 0 && VAR054 != '\r' && VAR054 != '\n') {
 break;  // COMMENT 
 }
 
@@ -437,54 +436,54 @@ break;  // COMMENT
 // COMMENT 
 delay(10);
 }
-VAR056 = tolower(VAR056);
+VAR054 = tolower(VAR054);
 
 // COMMENT 
-FUN026(VAR056);
+FUN027(VAR054);
 
 // COMMENT 
-if (VAR056 == 'q') {
+if (VAR054 == 'q') {
 break; // COMMENT 
 }
 
-switch (VAR056) {
+switch (VAR054) {
 // COMMENT 
-case 't': VAR040 -= 100; break;
-case 'y': VAR040 -= 10; break;
-case 'u': VAR040 -= 1; break;
-case 'i': VAR040 += 1; break;
-case 'o': VAR040 += 10; break;
-case 'p': VAR040 += 100; break;
+case 't': VAR038 -= 100; break;
+case 'y': VAR038 -= 10; break;
+case 'u': VAR038 -= 1; break;
+case 'i': VAR038 += 1; break;
+case 'o': VAR038 += 10; break;
+case 'p': VAR038 += 100; break;
 
 // COMMENT 
-case 'f': VAR041 -= 100; break;
-case 'g': VAR041 -= 10; break;
-case 'h': VAR041 -= 1; break;
-case 'j': VAR041 += 1; break;
-case 'k': VAR041 += 10; break;
-case 'l': VAR041 += 100; break;
+case 'f': VAR039 -= 100; break;
+case 'g': VAR039 -= 10; break;
+case 'h': VAR039 -= 1; break;
+case 'j': VAR039 += 1; break;
+case 'k': VAR039 += 10; break;
+case 'l': VAR039 += 100; break;
 
 default:
-FUN026(F("Comando non valido. Riprova."));
+FUN027(F("Comando non valido. Riprova."));
 break;
 }
 // COMMENT 
 }
 
 // COMMENT 
-EEPROM.put(VAR033, VAR040);
-EEPROM.put(VAR034,  VAR041);
+EEPROM.put(VAR031, VAR038);
+EEPROM.put(VAR032,  VAR039);
 
-FUN026(F("\nCalibrazione completata. Soglie salvate in EEPROM."));
+FUN027(F("\nCalibrazione completata. Soglie salvate in EEPROM."));
 }
 // COMMENT 
 
 
 void FUN009() {
-FUN026(F("== Modalità Calibrazione (da tastiera) =="));
-FUN031(F("SERVIZI: T-100/Y-10/U-1 I+1/O+10/P+100 bit"));
-FUN031(F(" || AVVIAMENTO : F-100/G-10/H-1 J+1/K+10/L+100 bit"));
-FUN026(F(" || Premi 'Q' per salvare e uscire."));
+FUN027(F("== Modalità Calibrazione (da tastiera) =="));
+FUN032(F("SERVIZI: T-100/Y-10/U-1 I+1/O+10/P+100 bit"));
+FUN032(F(" || AVVIAMENTO : F-100/G-10/H-1 J+1/K+10/L+100 bit"));
+FUN027(F(" || Premi 'Q' per salvare e uscire."));
 
 /* MLCOM-START 
  - MLCOM - 
@@ -498,101 +497,101 @@ ML-ECOM.END */
 // COMMENT 
 // COMMENT 
 
-int VAR057;
-int VAR058;
+int VAR055;
+int VAR056;
+float VAR057;
+float VAR058;
 float VAR059;
 float VAR060;
-float VAR061;
-float VAR062;
 
 // COMMENT 
 // COMMENT 
-VAR057 = analogRead(VAR014);
-VAR058  = analogRead(VAR015);
+VAR055 = analogRead(VAR012);
+VAR056  = analogRead(VAR013);
 
-VAR059 = VAR057 * VAR037 / 1023.0 * (VAR035 + VAR036) / VAR036;
-VAR060 = VAR058  * VAR037 / 1023.0 * (VAR035 + VAR036) / VAR036;
+VAR057 = VAR055 * VAR035 / 1023.0 * (VAR033 + VAR034) / VAR034;
+VAR058 = VAR056  * VAR035 / 1023.0 * (VAR033 + VAR034) / VAR034;
 
-VAR061 = VAR059 * VAR028;
-VAR062 = VAR060 * VAR029;
+VAR059 = VAR057 * VAR026;
+VAR060 = VAR058 * VAR027;
 
 
 // COMMENT 
-FUN031(F("CALIB. "));
-FUN031(VAR028, 3);
-FUN031(F(" | SERVIZI: "));
-FUN031(VAR061, 3);
+FUN032(F("CALIB. "));
+FUN032(VAR026, 3);
+FUN032(F(" | SERVIZI: "));
+FUN032(VAR059, 3);
 
-FUN031(F(" || CALIB.: "));
-FUN031(VAR029, 3);
-FUN031(F(" | AVVIAME.: "));
-FUN031(VAR062, 3);
-FUN026(" ");
+FUN032(F(" || CALIB.: "));
+FUN032(VAR027, 3);
+FUN032(F(" | AVVIAME.: "));
+FUN032(VAR060, 3);
+FUN027(" ");
 // COMMENT 
 
 
 
 while (true) {
-char VAR056 = 0;
-if (Serial.available()) VAR056 = Serial.read();
-if (bluetooth.available()) VAR056 = bluetooth.read();
+char VAR054 = 0;
+if (Serial.available()) VAR054 = Serial.read();
+if (bluetooth.available()) VAR054 = bluetooth.read();
 
 // COMMENT 
-if (VAR056 == '\n' || VAR056 == '\r') continue;
+if (VAR054 == '\n' || VAR054 == '\r') continue;
 
-VAR056 = tolower(VAR056); // COMMENT 
+VAR054 = tolower(VAR054); // COMMENT 
 
-if (VAR056 == 'q') break;
+if (VAR054 == 'q') break;
 
-bool VAR063 = true;
+bool VAR061 = true;
 
-switch (VAR056) {
+switch (VAR054) {
 // COMMENT 
-case 't': VAR028 -= 0.100; break;
-case 'y': VAR028 -= 0.010; break;
-case 'u': VAR028 -= 0.001; break;
-case 'i': VAR028 += 0.001; break;
-case 'o': VAR028 += 0.010; break;
-case 'p': VAR028 += 0.100; break;
+case 't': VAR026 -= 0.100; break;
+case 'y': VAR026 -= 0.010; break;
+case 'u': VAR026 -= 0.001; break;
+case 'i': VAR026 += 0.001; break;
+case 'o': VAR026 += 0.010; break;
+case 'p': VAR026 += 0.100; break;
 
 // COMMENT 
-case 'f': VAR029 -= 0.100; break;
-case 'g': VAR029 -= 0.010; break;
-case 'h': VAR029 -= 0.001; break;
-case 'j': VAR029 += 0.001; break;
-case 'k': VAR029 += 0.010; break;
-case 'l': VAR029 += 0.100; break;
+case 'f': VAR027 -= 0.100; break;
+case 'g': VAR027 -= 0.010; break;
+case 'h': VAR027 -= 0.001; break;
+case 'j': VAR027 += 0.001; break;
+case 'k': VAR027 += 0.010; break;
+case 'l': VAR027 += 0.100; break;
 
 default:
-VAR063 = false;
+VAR061 = false;
 break;
 }
 
-if (VAR063) {
+if (VAR061) {
 
 
 // COMMENT 
 // COMMENT 
-VAR057 = analogRead(VAR014);
-VAR058  = analogRead(VAR015);
+VAR055 = analogRead(VAR012);
+VAR056  = analogRead(VAR013);
 
-VAR059 = VAR057 * VAR037 / 1023.0 * (VAR035 + VAR036) / VAR036;
-VAR060 = VAR058  * VAR037 / 1023.0 * (VAR035 + VAR036) / VAR036;
+VAR057 = VAR055 * VAR035 / 1023.0 * (VAR033 + VAR034) / VAR034;
+VAR058 = VAR056  * VAR035 / 1023.0 * (VAR033 + VAR034) / VAR034;
 
-VAR061 = VAR059 * VAR028;
-VAR062 = VAR060 * VAR029;
+VAR059 = VAR057 * VAR026;
+VAR060 = VAR058 * VAR027;
 
 // COMMENT 
-FUN031(F("CALIB. "));
-FUN031(VAR028, 3);
-FUN031(F(" | SERVIZI: "));
-FUN031(VAR061, 3);
+FUN032(F("CALIB. "));
+FUN032(VAR026, 3);
+FUN032(F(" | SERVIZI: "));
+FUN032(VAR059, 3);
 
-FUN031(F(" || CALIB.: "));
-FUN031(VAR029, 3);
-FUN031(F(" | AVVIAME.: "));
-FUN031(VAR062, 3);
-FUN026(" ");
+FUN032(F(" || CALIB.: "));
+FUN032(VAR027, 3);
+FUN032(F(" | AVVIAME.: "));
+FUN032(VAR060, 3);
+FUN027(" ");
 // COMMENT 
 
 
@@ -602,31 +601,31 @@ FUN026(" ");
 
 
 // COMMENT 
-FUN014(VAR030, VAR028);
-FUN014(VAR031, VAR029);
+FUN015(VAR028, VAR026);
+FUN015(VAR029, VAR027);
 
-FUN026(F("Calibrazione completata e salvata in EEPROM."));
-FUN051(2);
+FUN027(F("Calibrazione completata e salvata in EEPROM."));
+FUN052(2);
 }
 
 
 // COMMENT 
-float FUN017(int address) {
-float VAR064;
-EEPROM.get(address, VAR064);
-return VAR064;
+float FUN018(int address) {
+float VAR062;
+EEPROM.get(address, VAR062);
+return VAR062;
 }
 
 // COMMENT 
-void FUN014(int address, float VAR064) {
-EEPROM.put(address, VAR064);
+void FUN015(int address, float VAR062) {
+EEPROM.put(address, VAR062);
 }
 
 // COMMENT 
-float FUN028(int pin, float calibrazione) {
-int VAR065 = analogRead(pin);
-float VAR066 = VAR065 * VAR037 / 1023.0 * (VAR035 + VAR036) / VAR036;
-return VAR066 * calibrazione;
+float FUN029(int pin, float calibrazione) {
+int VAR063 = analogRead(pin);
+float VAR064 = VAR063 * VAR035 / 1023.0 * (VAR033 + VAR034) / VAR034;
+return VAR064 * calibrazione;
 }
 
 // COMMENT 
@@ -636,28 +635,28 @@ return VAR066 * calibrazione;
  - MLCOM - 
 ML-ECOM.END */
 
-void FUN022(){
+void FUN023(){
 digitalWrite(VAR008, HIGH);
 }
 
-void FUN018(){
+void FUN019(){
 digitalWrite(VAR008, LOW);
 }
 
 
-void FUN019(){
+void FUN020(){
 digitalWrite(VAR009, HIGH);
 }
 
-void  FUN015(){
+void  FUN016(){
 digitalWrite(VAR009, LOW);
 }
 
-void FUN023(){
+void FUN024(){
 digitalWrite(VAR010,HIGH);
 }
 
-void FUN020(){
+void FUN021(){
 digitalWrite(VAR010, LOW);
 }
 
@@ -667,28 +666,28 @@ digitalWrite(VAR010, LOW);
 
 // COMMENT 
 
-void FUN042(){
-FUN015();
-FUN020();
-FUN018();
-delay(1000);
-
-FUN022();
-delay(1000);
-FUN018();
-delay(1000);
-
+void FUN043(){
+FUN016();
+FUN021();
 FUN019();
-delay(1000);
-FUN015();
 delay(1000);
 
 FUN023();
 delay(1000);
-FUN020();
+FUN019();
 delay(1000);
 
-FUN026(F("Test semaforo eseguito"));
+FUN020();
+delay(1000);
+FUN016();
+delay(1000);
+
+FUN024();
+delay(1000);
+FUN021();
+delay(1000);
+
+FUN027(F("Test semaforo eseguito"));
 /* MLCOM-START 
  - MLCOM - 
  - MLCOM - 
@@ -697,13 +696,13 @@ FUN026(F("Test semaforo eseguito"));
 ML-ECOM.END */
 }
 // COMMENT 
-void FUN043(){
+void FUN044(){
 digitalWrite(VAR004, LOW);
 delay(1000);
 digitalWrite(VAR004, HIGH);
 delay(1000);
 digitalWrite(VAR004, LOW);
-FUN026(F("Test Relay eseguito"));
+FUN027(F("Test Relay eseguito"));
 
 /* MLCOM-START 
  - MLCOM - 
@@ -715,7 +714,7 @@ ML-ECOM.END */
 }
 // COMMENT 
 
-void FUN044(){
+void FUN045(){
 
 wdt_reset(); // COMMENT 
 wdt_enable(WDTO_2S); // COMMENT 
@@ -723,143 +722,109 @@ wdt_enable(WDTO_2S); // COMMENT
 }
 // COMMENT 
 
-void FUN045(){
+void FUN046(){
 
-// COMMENT 
+const int VAR065 = EEPROM.length(); 
+byte TARGET_VALUE = 0xff;// COMMENT 
 
-/* MLCOM-START 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
- - MLCOM - 
-ML-ECOM.END */
+for (int i=0; i<VAR065;i++){
+Serial.println(i);
+EEPROM.write(i, TARGET_VALUE);
+}
+Serial.println("Eprom ripristinata");
+FUN051();
+
+
 }    
 
 // COMMENT 
 
-void FUN046(){
-int VAR067 ;
-
-VAR067 = digitalRead(VAR006);
-// COMMENT 
-FUN031(F("Jumper D4 - "));
-if (VAR067 == LOW) {
-FUN026(F("INSERITO azione relay ogni secondo"));
-} else {
-FUN026(F("MANCANTE azione relay ogni 10 secondi"));
-}
-
-VAR067 = digitalRead(VAR007);
-// COMMENT 
-FUN031(F("Jumper D2 - "));
-if (VAR067 == LOW) {
-FUN026(F("INSERITO stampa breve"));
-} else {
-FUN026(F("MANCANTE stampa completa"));
-}
-
-
-
-}
-// COMMENT 
-
 void FUN047(){
-// PARAMETRI DI DEFAULT EEPROM 
-WriteDefaultEEprom();
+int VAR066 ;
+
+VAR066 = digitalRead(VAR006);
+// COMMENT 
+FUN032(F("Jumper D4 - "));
+if (VAR066 == LOW) {
+FUN027(F("INSERITO azione relay ogni secondo"));
+} else {
+FUN027(F("MANCANTE azione relay ogni 10 secondi"));
+}
+
+VAR066 = digitalRead(VAR007);
+// COMMENT 
+FUN032(F("Jumper D2 - "));
+if (VAR066 == LOW) {
+FUN027(F("INSERITO stampa breve"));
+} else {
+FUN027(F("MANCANTE stampa completa"));
+}
+
+
+
 }
 // COMMENT 
 
 void FUN048(){
-FUN009();
-FUN026(F("Calibrazione completata e salvata in EEPROM."));
+// COMMENT 
+FUN012();
+FUN051();
 }
 // COMMENT 
 
 void FUN049(){
-FUN002();
-FUN026(F("Soglie impostate e salvate in EEPROM."));
+FUN009();
+FUN027(F("Calibrazione completata e salvata in EEPROM."));
 }
 // COMMENT 
 
 void FUN050(){
-FUN012();
+FUN002();
+FUN027(F("Soglie impostate e salvate in EEPROM."));
 }
 // COMMENT 
 
-void FUN037(){
-
+void FUN051(){
+FUN013();
 }
 // COMMENT 
 
 void FUN038(){
-FUN026(F(" S PFF ")); // COMMENT 
-FUN007();
+
 }
 // COMMENT 
 
 void FUN039(){
-FUN026(F(" S PFE ")); // COMMENT 
-FUN006();
+FUN027(F(" 57 M SY NOK")); // COMMENT 
+FUN007();
 }
 // COMMENT 
 
 void FUN040(){
-FUN026(F(" V P"));
+FUN027(F(" 58 M SY OK")); // COMMENT 
+FUN006();
+}
+// COMMENT 
+
+void FUN041(){
+FUN027(F(" 59 VE SY")); // COMMENT 
 
 // COMMENT 
 if (FUN008()) {
-Serial.println(" ok");
+Serial.println("S ok, r"); // COMMENT 
 } else {
-Serial.println("DM");
+Serial.println("S nok, d"); // COMMENT 
 }
 
 }
 // COMMENT 
 // COMMENT 
-void FUN041(){
-FUN026("Action no. 99 selected");
+void FUN042(){
+FUN027("Action no. 99 selected");
 delay(2000);
-FUN026("Returning to loop'");
+FUN027("Returning to loop'");
 delay(2000);
-VAR050 = true;  
+VAR048 = true;  
 }
 // COMMENT 
 
@@ -882,7 +847,7 @@ void(* resetFunc) (void) = 0; // COMMENT
  - MLCOM - 
  - MLCOM - 
 ML-ECOM.END */
-int FUN013(String inputString) {
+int FUN014(String inputString) {
 // COMMENT 
 inputString.trim();
 
@@ -899,11 +864,11 @@ return -1; // COMMENT
 }
 
 // COMMENT 
-int VAR068 = inputString.toInt();
+int VAR067 = inputString.toInt();
 
 // COMMENT 
-if (VAR068 >= 0 && VAR068 <= 999) {
-return VAR068; // COMMENT 
+if (VAR067 >= 0 && VAR067 <= 999) {
+return VAR067; // COMMENT 
 } else {
 return -1; // COMMENT 
 }
@@ -916,22 +881,22 @@ String bluetoothReadString = "";    // COMMENT
 serialReadString = "";    // COMMENT 
 bluetoothReadString = ""; // COMMENT 
 
-FUN026("\nInserisci un numero (0-999) e premi Invio:");
+FUN027("\nInserisci un numero (0-999) e premi Invio:");
 
 
 while (true) { // COMMENT 
 
 // COMMENT 
 while (Serial.available()) {
-char VAR069 = (char)Serial.read();
-serialReadString += VAR069;
+char VAR068 = (char)Serial.read();
+serialReadString += VAR068;
 
 // COMMENT 
-if (VAR069 == '\n') {
-int VAR068 = FUN013(serialReadString);
-if (VAR068 != -1) { // COMMENT 
+if (VAR068 == '\n') {
+int VAR067 = FUN014(serialReadString);
+if (VAR067 != -1) { // COMMENT 
 Serial.println("Numero ricevuto da Serial Monitor.");
-return VAR068; // COMMENT 
+return VAR067; // COMMENT 
 } else {
 Serial.print("Input non valido da Serial Monitor: '");
 serialReadString.trim();
@@ -946,17 +911,17 @@ Serial.println("Inserisci un numero (0-999) e premi Invio:");
 
 // COMMENT 
 while (bluetooth.available()) {
-char VAR069 = (char)bluetooth.read();
-bluetoothReadString += VAR069;
+char VAR068 = (char)bluetooth.read();
+bluetoothReadString += VAR068;
 
 // COMMENT 
-if (VAR069 == '\n') {
-int VAR068 = FUN013(bluetoothReadString);
-if (VAR068 != -1) { // COMMENT 
+if (VAR068 == '\n') {
+int VAR067 = FUN014(bluetoothReadString);
+if (VAR067 != -1) { // COMMENT 
 Serial.println("Numero ricevuto da Bluetooth.");
 bluetooth.print("Ricevuto: ");
-bluetooth.println(VAR068);
-return VAR068; // COMMENT 
+bluetooth.println(VAR067);
+return VAR067; // COMMENT 
 } else {
 Serial.print("Input non valido da Bluetooth: '");
 bluetoothReadString.trim();
@@ -978,11 +943,11 @@ bluetoothReadString = ""; // COMMENT
 void Menu() {
 wdt_disable(); // COMMENT 
 // COMMENT 
-while (!VAR050) {
+while (!VAR048) {
 
-FUN029();
+FUN030();
 
-int VAR070 = FUN004();
+int VAR069 = FUN004();
 /* MLCOM-START 
  - MLCOM - 
  - MLCOM - 
@@ -1003,79 +968,79 @@ int VAR070 = FUN004();
 ML-ECOM.END */
 
 // COMMENT 
-switch (VAR070){
+switch (VAR069){
 
 // COMMENT 
 case 0:
-FUN026("resetting in 1 sec");
+FUN027("resetting in 1 sec");
 delay(1000);               // COMMENT 
 resetFunc();  // COMMENT 
 
 delay(100);
-FUN026("Reset did not work");
+FUN027("Reset did not work");
 break;      // COMMENT 
 case 1:
-FUN042();
-
-break;
-// COMMENT 
-case 2:
 FUN043();
 
 break;
 // COMMENT 
-case 3:
+case 2:
 FUN044();
 
 break;
 // COMMENT 
-case 4:
+case 3:
 FUN045();
 
 break;
 // COMMENT 
-case 5:
+case 4:
 FUN046();
+
 break;
 // COMMENT 
-case 6:
+case 5:
 FUN047();
 break;
 // COMMENT 
-case 7:
+case 6:
 FUN048();
 break;
 // COMMENT 
-case 8:
+case 7:
 FUN049();
 break;
 // COMMENT 
-case 9:
+case 8:
 FUN050();
 break;
 // COMMENT 
-case 10:
-FUN037();
+case 9:
+FUN051();
 break;
 // COMMENT 
-case 57:
+case 10:
 FUN038();
 break;
 // COMMENT 
-case 58:
+case 57:
 FUN039();
 break;
 // COMMENT 
-case 59:
+case 58:
 FUN040();
 break;
 // COMMENT 
-case 99:
+case 59:
 FUN041();
 break;
 // COMMENT 
+case 99:
+FUN042();
+break;
+// COMMENT 
 default:
-FUN026("Invalid command. Try again!");
+FUN027("Invalid command. Try again!");
 } // COMMENT 
 } // COMMENT 
 } // COMMENT 
@@ -1083,16 +1048,16 @@ FUN026("Invalid command. Try again!");
 
 // COMMENT 
 
-void FUN024(){
+void FUN025(){
 while (bluetooth.available()) {
-char VAR056 = bluetooth.read();
+char VAR054 = bluetooth.read();
 // COMMENT 
 // COMMENT 
 // COMMENT 
-inputString += VAR056;
+inputString += VAR054;
 
-if (VAR056 == '\n') {
-VAR049 = true;
+if (VAR054 == '\n') {
+VAR047 = true;
 }
 }
 }
@@ -1105,13 +1070,13 @@ ML-ECOM.END */
 void serialEvent() {
 while (Serial.available()) {
 // COMMENT 
-char VAR069 = (char)Serial.read();
+char VAR068 = (char)Serial.read();
 // COMMENT 
-inputString += VAR069;
+inputString += VAR068;
 // COMMENT 
 // COMMENT 
-if (VAR069 == '\n') {
-VAR049 = true;
+if (VAR068 == '\n') {
+VAR047 = true;
 }
 }
 }
@@ -1125,30 +1090,30 @@ VAR049 = true;
 
 // COMMENT 
 // COMMENT 
-void FUN029(void){
+void FUN030(void){
 // COMMENT 
-FUN026("");
-FUN026(F("|XXXXXXXXXXXXXXXXXXXXXXXX"));
-FUN026(F("|🧪  🔍   Menu   🛠   🔧"));
-FUN031(F("|  Ver. "));FUN026(Versione);
-FUN026(F("|XXXXXXXXXXXXXXXXXXXXXXXX"));
-FUN026(F(" 0 Reset"));
-FUN026(F(" 1 Test Semaforo"));
-FUN026(F(" 2 Test Relè"));
-FUN026(F(" 3 Attiva Wdog senza resettarlo.. Farà reset"));
-FUN026(F(" 4 ---"));
-FUN026(F(" 5 Stato JUMPERS"));
-FUN026(F(" 6 Scrive EEPROM default"));
-FUN026(F(" 7 Calibrazione con tastiera"));
-FUN026(F(" 8 Taratura soglie da tastiera"));
-FUN026(F(" 9 EEPROM diagnostica"));
+FUN027("");
+FUN027(F("|XXXXXXXXXXXXXXXXXXXXXXXX"));
+FUN027(F("|🧪  🔍   Menu   🛠   🔧"));
+FUN032(F("|  Ver. "));FUN027(Versione);
+FUN027(F("|XXXXXXXXXXXXXXXXXXXXXXXX"));
+FUN027(F(" 0 Reset"));
+FUN027(F(" 1 Test Semaforo"));
+FUN027(F(" 2 Test Relè"));
+FUN027(F(" 3 Attiva Wdog senza resettarlo.. Farà reset"));
+FUN027(F(" 4 Cancella totalmente la EEPROM"));
+FUN027(F(" 5 Stato JUMPERS"));
+FUN027(F(" 6 Scrive EEPROM default"));
+FUN027(F(" 7 Calibrazione con tastiera"));
+FUN027(F(" 8 Taratura soglie da tastiera"));
+FUN027(F(" 9 EEPROM diagnostica"));
 
 /* MLCOM-START 
  - MLCOM - 
  - MLCOM - 
  - MLCOM - 
 ML-ECOM.END */
-FUN026(F(" 99 Return to loop without reset"));
+FUN027(F(" 99 Return to loop without reset"));
 }
 // COMMENT 
 // COMMENT 
@@ -1174,51 +1139,53 @@ ML-ECOM.END */
 
 // COMMENT 
 
-void FUN021(){
-VAR020 = VAR020+1;
-VAR024 = VAR024+1;
-
-
-if (VAR020==60){
-VAR020 = 0;
-VAR021 = VAR021+1;
-FUN003();
-}
-
-if (VAR021==60){
-VAR021=0;
+void FUN022(){
+VAR018 = VAR018+1;
 VAR022 = VAR022+1;
+
+
+if (VAR018==60){
+VAR018 = 0;
+VAR019 = VAR019+1;
+// COMMENT 
 }
 
-if (VAR022==24){
-VAR022 = 0;
-VAR023=VAR023+1;
+if (VAR019==60){
+VAR019=0;
+VAR020 = VAR020+1;
+// COMMENT 
+}
+
+if (VAR020==24){
+VAR020 = 0;
+VAR021=VAR021+1;
+FUN003(); // COMMENT 
 }
 }
 
 // COMMENT 
-void FUN025(){
+void FUN026(){
 
-char VAR072[24];  
+char VAR071[24];  
 // COMMENT 
-sprintf(VAR072, "; ⏳ %u:%02u:%02u:%02u", 
-VAR023, 
-VAR022, 
+sprintf(VAR071, "; ⏳ %u:%02u:%02u:%02u", 
 VAR021, 
-VAR020);
+VAR020, 
+VAR019, 
+VAR018);
 
-Serial.print(VAR072);
-bluetooth.print(VAR072);
+Serial.print(VAR071);
+bluetooth.print(VAR071);
 
-FUN031(F(" 🔁 Reset "));
-FUN026(VAR027);
+FUN032(F(" 🔁 Reset "));
+FUN027(VAR025);
 
 }
 
 
 void FUN010() {
-int VAR073;
-float VAR074;
+int VAR072;
+float VAR073;
 
 wdt_enable(WDTO_2S); // COMMENT 
 
@@ -1228,8 +1195,8 @@ for (int i = 0; i < 60; i++) {
 // COMMENT 
 wdt_reset(); // COMMENT 
 
-VAR073 = VAR020 + i;
-VAR074 = VAR022 / VAR021;
+VAR072 = VAR018 + i;
+VAR073 = VAR020 / VAR019;
 
 delay(100); // COMMENT 
 i = VAR011;
@@ -1252,34 +1219,38 @@ i = VAR011;
 
 // COMMENT 
 // COMMENT 
-const int VAR075 = EEPROM.length() - 1; 
+const int VAR065 = EEPROM.length() - 1; 
 
 // COMMENT 
 // COMMENT 
 // COMMENT 
 void FUN006() {
-const int VAR075 = EEPROM.length() - 1; 
-const byte VALUE_TO_WRITE = 0xFE;
-EEPROM.write(VAR075, VALUE_TO_WRITE);
-/*
-Serial.print("Scritto 0x");
-Serial.print(VALUE_TO_WRITE, HEX);
-Serial.print(" all'indirizzo EEPROM: ");
-Serial.println(VAR075);
-*/
+const int VAR065 = EEPROM.length() - 1; 
+byte VALUE_TO_WRITE = 0; // COMMENT 
+VALUE_TO_WRITE = VALUE_TO_WRITE-2; 
+EEPROM.write(VAR065, VALUE_TO_WRITE);
+/* MLCOM-START 
+ - MLCOM - 
+ - MLCOM - 
+ - MLCOM - 
+ - MLCOM - 
+ - MLCOM - 
+ML-ECOM.END */
 }
 
 // COMMENT 
 // COMMENT 
 // COMMENT 
 void FUN007() {
-const int VAR075 = EEPROM.length() - 1; 
+const int VAR065 = EEPROM.length() - 1; 
 const byte VALUE_TO_WRITE = 0xFF;
-EEPROM.write(VAR075, VALUE_TO_WRITE);
-Serial.print("S");
-Serial.print(VALUE_TO_WRITE, HEX);
-Serial.print(" A ");
-Serial.println(VAR075);
+EEPROM.write(VAR065, VALUE_TO_WRITE);
+/* MLCOM-START 
+ - MLCOM - 
+ - MLCOM - 
+ - MLCOM - 
+ - MLCOM - 
+ML-ECOM.END */
 }
 
 
@@ -1290,16 +1261,16 @@ Serial.println(VAR075);
 // COMMENT 
 // COMMENT 
 // COMMENT 
-void FUN016() {
+void FUN017() {
 // COMMENT 
-const int VAR075 = EEPROM.length() - 1; 
-const byte TARGET_VALUE = 0xFE; // COMMENT 
-
-EEPROM.write(VAR075, TARGET_VALUE);
-Serial.print("W");
+const int VAR065 = EEPROM.length() - 1; 
+byte TARGET_VALUE = 0;// COMMENT 
+TARGET_VALUE = TARGET_VALUE - 2; // COMMENT 
+EEPROM.write(VAR065, TARGET_VALUE);
+Serial.print("Written 0x");
 Serial.print(TARGET_VALUE, HEX);
-Serial.print(" A ");
-Serial.println(VAR075);
+Serial.print(" to EEPROM address: ");
+Serial.println(VAR065);
 }
 
 
@@ -1311,10 +1282,10 @@ Serial.println(VAR075);
 // COMMENT 
 bool FUN008() {
 // COMMENT 
-const int VAR075 = EEPROM.length() - 1; 
-const byte TARGET_VALUE = 0xFE; // COMMENT 
-
-byte readValue = EEPROM.read(VAR075);
+const int VAR065 = EEPROM.length() - 1; 
+byte TARGET_VALUE = 0;// COMMENT 
+TARGET_VALUE = TARGET_VALUE-2;
+byte readValue = EEPROM.read(VAR065);
 // COMMENT 
 // COMMENT 
 // COMMENT 
@@ -1337,16 +1308,16 @@ return false;
 
 
 
-void FUN033(){
+void FUN034(){
 
-FUN031(F("📌CHARGER SU "));
+FUN032(F("📌CHARGER SU "));
 // COMMENT 
 
-if (VAR048){
-FUN031(F("B. AVVIAM. 🛑🛑🛑"));
+if (VAR046){
+FUN032(F("B. AVVIAM. 🛑🛑🛑"));
 
 } else {
-FUN031(F("B. SERVIZI ✅✅✅"));
+FUN032(F("B. SERVIZI ✅✅✅"));
 }
 
 
@@ -1356,42 +1327,42 @@ FUN031(F("B. SERVIZI ✅✅✅"));
 // COMMENT 
 void FUN005(){
 
-if (VAR038 < VAR040) {
+if (VAR036 < VAR038) {
 // COMMENT 
 if (VAR002==true){
 VAR002 = false;
-FUN051(2); // COMMENT 
+FUN052(2); // COMMENT 
 }
 // COMMENT 
-VAR048 = false;      
+VAR046 = false;      
 digitalWrite(VAR004, LOW);
-FUN026(F("VBAT serv. inf. soglia bassa → relè disattivato ✅"));
+FUN027(F("VBAT serv. inf. soglia bassa → relè disattivato ✅"));
 
 // COMMENT 
-FUN022();
-FUN020();
+FUN023();
+FUN021();
 // COMMENT 
 
 
 
 
-} else if (VAR038 > VAR041) {
+} else if (VAR036 > VAR039) {
 // COMMENT 
 if (VAR002==false){
 VAR002 = true;
-FUN051(3); // COMMENT 
+FUN052(3); // COMMENT 
 }
 // COMMENT 
-VAR048 = true;
+VAR046 = true;
 VAR002=true;
 digitalWrite(VAR004, HIGH);
-FUN026(F("VBAT serv. super. soglia alta → relè attivato 🛑"));
+FUN027(F("VBAT serv. super. soglia alta → relè attivato 🛑"));
 
 // COMMENT 
-FUN018();
-FUN023();      
+FUN019();
+FUN024();      
 } else {
-FUN026("VBAT nella zona neutra → nessuna azione");
+FUN027("VBAT nella zona neutra → nessuna azione");
 }
 }
 
@@ -1407,14 +1378,14 @@ FUN026("VBAT nella zona neutra → nessuna azione");
 
 // COMMENT 
 template <typename T>
-void FUN031(T dato) {
+void FUN032(T dato) {
 Serial.print(dato);
 bluetooth.print(dato);
 }
 
 // COMMENT 
 template <typename T>
-void FUN026(T dato) {
+void FUN027(T dato) {
 Serial.println(dato);
 bluetooth.println(dato);
 }
@@ -1422,7 +1393,7 @@ bluetooth.println(dato);
 
 // COMMENT 
 
-void FUN031(float val, int decimali) {
+void FUN032(float val, int decimali) {
 Serial.print(val, decimali);
 bluetooth.print(val, decimali);
 }
@@ -1433,7 +1404,7 @@ bluetooth.print(val, decimali);
 // COMMENT 
 // COMMENT 
 // COMMENT 
-int FUN034(){
+int FUN035(){
 if (Serial.available()) {
 return Serial.read();
 }
@@ -1461,32 +1432,32 @@ ML-ECOM.END */
  - MLCOM - 
  - MLCOM - 
 ML-ECOM.END */
-int FUN027(Stream &stream) {
-long VAR076 = millis();
+int FUN028(Stream &stream) {
+long VAR074 = millis();
 String numString = "";
-bool VAR077 = false;
-bool VAR078 = false;
+bool VAR075 = false;
+bool VAR076 = false;
 
-while (millis() - VAR076 < VAR055) {
+while (millis() - VAR074 < VAR053) {
 if (stream.available()) {
-char VAR056 = stream.read();
+char VAR054 = stream.read();
 
-if (!VAR078) {
+if (!VAR076) {
 // COMMENT 
-if (isDigit(VAR056)) {
-numString += VAR056;
-VAR078 = true;
-} else if (VAR056 == '-') {
-VAR077 = true;
-VAR078 = true; // COMMENT 
-} else if (VAR056 == '+') {
-VAR078 = true; // COMMENT 
+if (isDigit(VAR054)) {
+numString += VAR054;
+VAR076 = true;
+} else if (VAR054 == '-') {
+VAR075 = true;
+VAR076 = true; // COMMENT 
+} else if (VAR054 == '+') {
+VAR076 = true; // COMMENT 
 }
 // COMMENT 
 } else {
 // COMMENT 
-if (isDigit(VAR056)) {
-numString += VAR056;
+if (isDigit(VAR054)) {
+numString += VAR054;
 } else {
 // COMMENT 
 break;
@@ -1497,11 +1468,11 @@ break;
 
 // COMMENT 
 if (numString.length() > 0) {
-long VAR079 = numString.toInt(); // COMMENT 
-if (VAR077) {
-return -VAR079;
+long VAR077 = numString.toInt(); // COMMENT 
+if (VAR075) {
+return -VAR077;
 } else {
-return VAR079;
+return VAR077;
 }
 } else {
 // COMMENT 
@@ -1512,23 +1483,23 @@ return 0;
 // COMMENT 
 
 // COMMENT 
-void FUN032() {
-unsigned char VAR080;
+void FUN033() {
+unsigned char VAR078;
 for (VAR001 = 0; VAR001 < sizeof(CODE_ARRAY); VAR001++) {
 // COMMENT 
-VAR080 = pgm_read_byte(&(CODE_ARRAY[VAR001]));
+VAR078 = pgm_read_byte(&(CODE_ARRAY[VAR001]));
 }
 }
 // COMMENT 
 
 void setup() {
-FUN032();   
-if (VAR016){
-VAR014 = A3;
-VAR015 = A2;
+FUN033();   
+if (VAR014){
+VAR012 = A3;
+VAR013 = A2;
 } else {
-VAR014 = A2;
-VAR015 = A3;
+VAR012 = A2;
+VAR013 = A3;
 }  
 
 
@@ -1541,23 +1512,23 @@ wdt_disable(); // COMMENT
 
 Serial.begin(115200);
 bluetooth.begin(9600);
-FUN026(F("RESET"));
-FUN031(F("Nome file: "));
-FUN026(__FILE__);
+FUN027(F("RESET"));
+FUN032(F("Nome file: "));
+FUN027(__FILE__);
 
 // COMMENT 
-VAR028 = FUN017(VAR030);
-VAR029  = FUN017(VAR031);
+VAR026 = FUN018(VAR028);
+VAR027  = FUN018(VAR029);
 
 // COMMENT 
 // COMMENT 
-EEPROM.get(VAR032, VAR027);
+EEPROM.get(VAR030, VAR025);
 
 // COMMENT 
-VAR027++;
+VAR025++;
 
 // COMMENT 
-EEPROM.put(VAR032, VAR027); 
+EEPROM.put(VAR030, VAR025); 
 
 /* MLCOM-START 
  - MLCOM - 
@@ -1565,21 +1536,21 @@ EEPROM.put(VAR032, VAR027);
 ML-ECOM.END */
 
 // COMMENT 
-EEPROM.get(VAR033, VAR040);
-EEPROM.get(VAR034,  VAR041);
+EEPROM.get(VAR031, VAR038);
+EEPROM.get(VAR032,  VAR039);
 
 // COMMENT 
 
-if (isnan(VAR040)) VAR040 = 600;
-if (isnan(VAR041))  VAR041 = 600;
+if (isnan(VAR038)) VAR038 = 600;
+if (isnan(VAR039))  VAR039 = 600;
 /* MLCOM-START 
  - MLCOM - 
  - MLCOM - 
 ML-ECOM.END */
 
 // COMMENT 
-if (isnan(VAR028)) VAR028 = 1.0;
-if (isnan(VAR029))  VAR029 = 1.0;
+if (isnan(VAR026)) VAR026 = 1.0;
+if (isnan(VAR027))  VAR027 = 1.0;
 
 pinMode(VAR004, OUTPUT);
 pinMode(VAR005, OUTPUT);
@@ -1601,14 +1572,14 @@ digitalWrite(VAR009, HIGH);
 delay(200);
 digitalWrite(VAR008, HIGH);
 delay(200);
-FUN051(1);
+FUN052(1);
 digitalWrite(VAR010, LOW);
 delay(200);
 digitalWrite(VAR009, LOW);
 delay(200);
 digitalWrite(VAR008, LOW);
 delay(200);
-FUN051(1);
+FUN052(1);
 
 /* MLCOM-START 
  - MLCOM - 
@@ -1642,37 +1613,37 @@ FUN005();
 // COMMENT 
 
 void loop() {
-int VAR081 ;
+int VAR079 ;
 
 
 wdt_reset(); // COMMENT 
 
-unsigned long VAR071 = millis();
+unsigned long VAR070 = millis();
 
 
 
 // COMMENT 
-VAR081 = digitalRead(VAR006);
+VAR079 = digitalRead(VAR006);
 // COMMENT 
 // COMMENT 
-if (VAR081 == LOW) {
+if (VAR079 == LOW) {
 // COMMENT 
-if ((VAR025 > 0) && (VAR024 % 1 == 0) && (VAR024 != 0)) {
+if ((VAR023 > 0) && (VAR022 % 1 == 0) && (VAR022 != 0)) {
 
-if (VAR024 != VAR026) {
+if (VAR022 != VAR024) {
 
 FUN005();
-VAR026 = VAR024;
+VAR024 = VAR022;
 }
 }
 } else {
 // COMMENT 
-if ((VAR025 > 0) && (VAR024 % VAR025 == 0) && (VAR024 != 0)) {
+if ((VAR023 > 0) && (VAR022 % VAR023 == 0) && (VAR022 != 0)) {
 
-if (VAR024 != VAR026) {
+if (VAR022 != VAR024) {
 
 FUN005();
-VAR026 = VAR024;
+VAR024 = VAR022;
 }
 }
 }
@@ -1683,39 +1654,39 @@ VAR026 = VAR024;
 
 
 // COMMENT 
-if (VAR071 - VAR018 >= VAR019) {
-VAR018 = VAR071;
+if (VAR070 - VAR016 >= VAR017) {
+VAR016 = VAR070;
 digitalWrite(VAR009, !digitalRead(VAR009));
 
 FUN001();
 
 
-FUN033();
-FUN021();
+FUN034();
+FUN022();
+FUN026();
+
+if (VAR015){
+FUN032(F("Debug attivo"));
+FUN032(F("; VAR022=")); FUN032(VAR022);
+FUN032(F("; VAR023=")); FUN032(VAR023);
+FUN032(F("; VAR024=")); FUN032(VAR024); 
+FUN027("");
+}
+
+}
+
 FUN025();
-
-if (VAR017){
-FUN031(F("Debug attivo"));
-FUN031(F("; VAR024=")); FUN031(VAR024);
-FUN031(F("; VAR025=")); FUN031(VAR025);
-FUN031(F("; VAR026=")); FUN031(VAR026); 
-FUN026("");
-}
-
-}
-
-FUN024();
 // COMMENT 
-if (VAR049) {
+if (VAR047) {
 inputString.trim();
-FUN026(inputString);
+FUN027(inputString);
 // COMMENT 
 if ( (inputString.substring(0, 4) ) == "Menu" ) {
 Menu();
 }
 // COMMENT 
 inputString = "";
-VAR049 = false;
+VAR047 = false;
 }
 
 
@@ -1723,29 +1694,29 @@ VAR049 = false;
 
 // COMMENT 
 void FUN001(){
-VAR038 = analogRead(VAR014);
-VAR039 = analogRead(VAR015);
+VAR036 = analogRead(VAR012);
+VAR037 = analogRead(VAR013);
 
 // COMMENT 
 // COMMENT 
 // COMMENT 
 
 
-VAR042 = VAR040 * VAR037 / 1023.0 * (VAR035 + VAR036) / VAR036;
-VAR043 = VAR041 * VAR037 / 1023.0 * (VAR035 + VAR036) / VAR036;
+VAR040 = VAR038 * VAR035 / 1023.0 * (VAR033 + VAR034) / VAR034;
+VAR041 = VAR039 * VAR035 / 1023.0 * (VAR033 + VAR034) / VAR034;
 
 
-VAR044 = VAR038 * VAR037 / 1023.0 * (VAR035 + VAR036) / VAR036;
-VAR045 = VAR039 * VAR037 / 1023.0 * (VAR035 + VAR036) / VAR036;
-
-// COMMENT 
-// COMMENT 
-VAR044 = VAR044 * VAR028;
-// COMMENT 
+VAR042 = VAR036 * VAR035 / 1023.0 * (VAR033 + VAR034) / VAR034;
+VAR043 = VAR037 * VAR035 / 1023.0 * (VAR033 + VAR034) / VAR034;
 
 // COMMENT 
 // COMMENT 
-VAR045 = VAR045 * VAR029;
+VAR042 = VAR042 * VAR026;
+// COMMENT 
+
+// COMMENT 
+// COMMENT 
+VAR043 = VAR043 * VAR027;
 // COMMENT 
 
 
@@ -1753,23 +1724,23 @@ VAR045 = VAR045 * VAR029;
 // COMMENT 
 
 
-int VAR082 ;
-VAR082 = digitalRead(VAR007);
+int VAR080 ;
+VAR080 = digitalRead(VAR007);
 // COMMENT 
-if (VAR082 == LOW) {
+if (VAR080 == LOW) {
 
-FUN031(F("⚙️ SHI "));FUN031(VAR043);FUN031(F("; "));
-FUN031(F("SLO "));FUN031(VAR042);FUN031(F("; "));
-FUN031(F("🔋 B.SRV "));FUN031(VAR044);FUN031(F("; "));
-FUN031(F(" B.AVV "));FUN031(VAR045);FUN031(F("; "));
+FUN032(F("⚙️ SHI "));FUN032(VAR041);FUN032(F("; "));
+FUN032(F("SLO "));FUN032(VAR040);FUN032(F("; "));
+FUN032(F("🔋 B.SRV "));FUN032(VAR042);FUN032(F("; "));
+FUN032(F(" B.AVV "));FUN032(VAR043);FUN032(F("; "));
 
 } else {
 
-FUN026(F("--------------------------"));
-FUN031(F("⚙️ Soglia alta "));FUN031(VAR041);FUN031(F(" BIT; "));FUN031(VAR043);FUN026(F(" VOLT; "));
-FUN031(F("⚙️ Soglia bassa "));FUN031(VAR040);FUN031(F(" BIT; "));FUN031(VAR042);FUN026(F(" VOLT; "));
-FUN031(F("🔋 Batt. servizi "));FUN031(VAR038);FUN031(F(" BIT; "));FUN031(VAR044);FUN026(F(" VOLT; "));
-FUN031(F("🚀 Batt. avviamento "));FUN031(VAR039);FUN031(F(" BIT; "));FUN031(VAR045);FUN026(F(" VOLT; "));
+FUN027(F("--------------------------"));
+FUN032(F("⚙️ Soglia alta "));FUN032(VAR039);FUN032(F(" BIT; "));FUN032(VAR041);FUN027(F(" VOLT; "));
+FUN032(F("⚙️ Soglia bassa "));FUN032(VAR038);FUN032(F(" BIT; "));FUN032(VAR040);FUN027(F(" VOLT; "));
+FUN032(F("🔋 Batt. servizi "));FUN032(VAR036);FUN032(F(" BIT; "));FUN032(VAR042);FUN027(F(" VOLT; "));
+FUN032(F("🚀 Batt. avviamento "));FUN032(VAR037);FUN032(F(" BIT; "));FUN032(VAR043);FUN027(F(" VOLT; "));
 
 }
 
@@ -1779,7 +1750,7 @@ FUN031(F("🚀 Batt. avviamento "));FUN031(VAR039);FUN031(F(" BIT; "));FUN031(VA
 // COMMENT 
 
 
-void FUN051(int count) {
+void FUN052(int count) {
 for (int i = 0; i < count; i++) {
 if (VAR003){
 // COMMENT 
