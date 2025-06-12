@@ -85,10 +85,10 @@
         "open": false,
         "window": {
           "display": 0,
-          "maximized": false,
-          "pos_x": 112,
-          "pos_y": 2,
-          "size_x": 1189,
+          "maximized": true,
+          "pos_x": -8,
+          "pos_y": -8,
+          "size_x": 1696,
           "size_y": 1026
         }
       }
