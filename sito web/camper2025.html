@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Camper Energy Saver</title>
+</head>
+<body>
+  <h1>Camper Energy Saver</h1>
+
+  <h2>Contesto</h2>
+  <p>
+    Camper con pannello solare che ricarica la "Batteria Servizi".  
+    Batteria avviamento, che per lunghe fermate soffre di fisiologica autoscarica.
+  </p>
+
+  <h2>Idea</h2>
+  <p>
+    Quando la "Batteria Servizi" ha raggiunto la massima carica, connettere il charger solare alla "Batteria Avviamento" per mantenerla carica.  
+    Monitorare la tensione della "Batteria Servizi", scollegando la "Batteria Avviamento" quando scende sotto una certa soglia, per garantire la carica della "B.Servizi".
+  </p>
+
+  <h2>Progetto</h2>
+  <p>
+    Basta un comparatore analogico con isteresi, che pilota un rele quando la tensione "Servizi" supera una soglia, e lo rilascia quando scende sotto un'altra.  
+    Ad es. soglie 13.7V e 12.2V.
+  </p>
+
+  <h2>Realizzazione pratica</h2>
+  <p>
+    Circuito semplice, ma difficile da tarare sul campo. Serve disconnettere la batteria servizi, usare alimentatore variabile preciso, prove ripetute.  
+    Trimmer delicati, da incollare, e altre complicazioni pratiche.
+  </p>
+
+  <h2>Soluzione digitale</h2>
+  <p>
+    Arduino Nano legge la tensione con ADC e comanda il rele con logica uguale ad un comparatore con isteresi, ma con soglie facilmente regolabili da terminale seriale (USB o BLUETOOTH).
+  </p>
+
+  <h2>Accessori</h2>
+  <ul>
+    <li>Valori via Bluetooth visibili con app "Bluetooth terminale seriale"</li>
+    <li>Comando da app (digitando "Menu") per modificare soglie</li>
+    <li>Buzzer per ogni azione di connessione/disconnessione "Batteria Avviamento"</li>
+    <li>Step-up regolabile per corrente carica controllata</li>
+  </ul>
+
+  <h2>Link utili</h2>
+  <ul>
+    <li><a href="https://github.com/shop2007/Camper_energy_saver/blob/main/Schema%20con%20DC%20DC%20step%20up.jpg?raw=true" rel="nofollow">Schema completo</a></li>
+    <li><a href="https://github.com/shop2007/Camper_energy_saver/raw/refs/heads/main/Camper_energy_saver_22p/Camper_energy_saver_22p.ino" rel="nofollow">Sketch per Arduino Nano</a></li>
+    <li><a href="https://github.com/shop2007/Camper_energy_saver" rel="nofollow">Progetto completo su GitHub</a></li>
+    <li><a href="https://www.ebay.it/itm/235901868338" rel="nofollow">PCB su eBay</a></li>
+    <li><a href="https://play.google.com/store/apps/details?id=de.kai_morich.serial_bluetooth_terminal&hl=it" rel="nofollow">App Serial Bluetooth Terminal</a></li>
+    <li><a href="https://raw.githubusercontent.com/shop2007/Camper_energy_saver/refs/heads/main/PDF-immagini/IN%20CONTENITORE%20METALLICO%20114X65.jpg" rel="nofollow">Immagine contenitore</a></li>
+    <li><a href="https://raw.githubusercontent.com/shop2007/Camper_energy_saver/refs/heads/main/PDF-immagini/MAK_NANO2RELE%20piano%20di%20montaggio..png" rel="nofollow">Piano montaggio PCB</a></li>
+    <li><a href="https://github.com/shop2007/Camper_energy_saver/raw/refs/heads/main/Camper%20Energy%20Saver%20-%20Manuale%20Utente.docx" rel="nofollow">Manuale utente</a></li>
+  </ul>
+
+  <h2>Note finali</h2>
+  <p>
+    Configurazione jumper: vedi manuale.  
+    Connessioni: vedi manuale.  
+    Immagine esemplare montato: vedi manuale.
+  </p>
+</body>
+</html>
