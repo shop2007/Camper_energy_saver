@@ -1,0 +1,45 @@
+PAU.1.7.2025.03067
+PAU.1.7.2025.03068  PAD_1MM
+
+Contesto: 
+- Camper con pannello solare che ricarica la "Batteria Servizi"
+- Batteria avviamento, che per lunghe fermate soffre di fisiologica autoscarica
+
+Idea: quando la "Batteria servizi" ha raggiunto il massimo della sua carica, connettere il charger solare alla "Batteria avviamento" per mantenerla carica. Monitorare la tensione della "Batteria servizi", scollegando la "Batteria avviamento" quando scende sotto una determinata soglia, per garantire la carica della B.Servizi.
+
+Progetto: basta un comparatore analogico con una isteresi, che piloti un relè quando la tensione "Servizi" raggiunge una certa soglia, e lo rilasci quando scende sotto un'altra soglia, ad esempio 13,7v  e 12,2v.
+
+Realizzazione pratica: circuito di per sè banale, ma difficile da tatare sul campo, perchè devi sconnettere la batteria servizi, emularla con un alimentatore variabile e preciso, fare un sacco di prove attacca e stacca. Lento, ferraginoso e poco preciso, con i trimmer che possono anche muoversi per le vibrazioni, occore incollarli, più un sacco di altre problematiche che non sto a descrivere.
+
+Seconda soluzione: digitale, un Arduino Nano da 2 euro che legge con l'ADC la tensione della batteria servizi, e comanda il relè con la logica desiderata.
+
+Accessori: trasmissione dei valori utili via Bluetooth visualizzabili su smartphone tramite la app "Bluetooth terminale seriale". COn lo stesso è possibile entrare nelle impostazioni (digitando Menu) e cambiare le soglie.
+
+Un buzzer ci avvisa ad ogni azione di connessione o siconnessione della Batteria avviamento.
+
+Ho aggiunto uno step-up in modo che quando ho 13v la innalzo quanto basta (trimmer dello step-up) per regolare la corrente di carica della Batteria avviamento (vedi schema) 
+
+Schema completo https://github.com/shop2007/Camper_energy_saver/blob/main/Schema%20con%20DC%20DC%20step%20up.jpg?raw=true
+
+Sketch compilabile per programmare Arduino Nano  https://github.com/shop2007/Camper_energy_saver/raw/refs/heads/main/Camper_energy_saver_22p/Camper_energy_saver_22p.ino
+
+Tutto il progetto https://github.com/shop2007/Camper_energy_saver
+
+PCB https://www.ebay.it/itm/235901868338
+
+APP Serial Bluetooth Terminal https://play.google.com/store/apps/details?id=de.kai_morich.serial_bluetooth_terminal&hl=it
+
+Configurazione dei jumper  vedi manuale
+
+Connessioni vedi manuale
+
+Immagine esemplare montato Vedi manuale
+
+Contenitore metallico https://raw.githubusercontent.com/shop2007/Camper_energy_saver/refs/heads/main/PDF-immagini/IN%20CONTENITORE%20METALLICO%20114X65.jpg
+
+
+Piano di montaggio pcb https://raw.githubusercontent.com/shop2007/Camper_energy_saver/refs/heads/main/PDF-immagini/MAK_NANO2RELE%20piano%20di%20montaggio..png
+
+Manuale utente https://github.com/shop2007/Camper_energy_saver/raw/refs/heads/main/Camper%20Energy%20Saver%20-%20Manuale%20Utente.docx
+
+
