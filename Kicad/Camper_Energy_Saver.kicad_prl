@@ -82,14 +82,14 @@
     "files": [
       {
         "name": "Camper_Energy_Saver.kicad_sch",
-        "open": false,
+        "open": true,
         "window": {
-          "display": 0,
-          "maximized": true,
-          "pos_x": -8,
-          "pos_y": -8,
-          "size_x": 1696,
-          "size_y": 1026
+          "display": 1,
+          "maximized": false,
+          "pos_x": 2152,
+          "pos_y": 145,
+          "size_x": 1193,
+          "size_y": 906
         }
       }
     ]
