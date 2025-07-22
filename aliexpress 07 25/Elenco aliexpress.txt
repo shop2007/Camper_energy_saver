@@ -1,0 +1,15 @@
+Bluetooth
+Nano- zoccoli
+Contenitore
+Faston
+Interruttore
+Led
+Relè
+Diodo
+
+
+Ricapitolando brevemente, a parte gli oggetti che ho preso per me:
+ 1,12€ Modulo amplificatore https://a.aliexpress.com/_EJozJh8 3
+ 1,36€ DC-DC Step Up https://a.aliexpress.com/_Eu3Lm0m 2 x i parallelatori, 2 per te  2 x me 
+ 4,16€ | Kafuter A + B colla https://a.aliexpress.com/_EGY8SNo  x te.
+ 0,34€ | https://a.aliexpress.com/_EwJWd3g  4 diodi Schottky MBR6045PT (45B/30+30Amp) 2 per i parallelatori, uno di scorta per te ed uno per me. 
