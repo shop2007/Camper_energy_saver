@@ -1,0 +1,35 @@
+/*
+eseguire in sequenza:
+ - 1 Test Semaforo : prova i led se correttamente saldati
+ - 2 Test Relè : collauda il relè
+ - 5 Stato JUMPERS : letura dei jumper se correttamente saldati
+ 
+ - 6 Scrive EEPROM default : la EEPROM viene preparata con i valori di default
+ 
+ - 7 Calibrazione con tastiera: leggere la Vservizi e la Vavviamento e compensare errori dovuti a tolleranze dei resistori
+	== Modalità Calibrazione (da tastiera) ==
+	SERVIZI: 
+		T-100/Y-10/U-1 
+		I+1/O+10/P+100 bit 
+	AVVIAMENTO : 
+		F-100/G-10/H-1 
+		J+1/K+10/L+100 bit 
+	'Q' per salvare e uscire.
+
+ 
+ - 8 Taratura soglie da tastiera : 
+	le soglie di scatto della Vservizi sono preimpostate sulla EEPROM a:
+		Soglia BASSA: 670bit (13.20 V)
+		Soglia ALTA: 695bit (13.69 V)
+		
+	E' possibile variarle con 
+		// Soglia BASSA: 
+			T-100/Y-10/U-1 
+			I+1/O+10/P+100 bit
+		Soglia ALTA : 
+			F-100/G-10/H-1 
+			J+1/K+10/L+100 bit
+		'Q' per salvare e uscire.	
+
+XX ESEGUIRE ABILITAZIONE FIRMWARE E VERIFICA		
+*/
