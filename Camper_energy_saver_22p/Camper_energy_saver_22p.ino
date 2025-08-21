@@ -1,4 +1,15 @@
 /*
+  Sketch Arduino distribuito con licenza proprietaria.
+  Uso personale consentito.
+  Non è consentita la modifica, la decompilazione o la redistribuzione a fini commerciali.
+  © [LPAUTAS@GMAIL.COM], [2025] – Tutti i diritti riservati.
+  -------------
+   Arduino sketch distributed under a proprietary license.
+  Personal use allowed.
+  Modification, decompilation, or commercial redistribution is not permitted.
+  © [LPAUTAS@GMAIL.COM], [2025] – All rights reserved.
+*/
+/*
 14 aggiunto calibrazione da tastiera
 15 aggiunto contatore di reset
 16 aggiunto taratura soglie da tastiera
@@ -7,12 +18,6 @@
 19 rimosso commenti multilinea ROTTI e creato funzione loop infinito nascosta
 20 aggiunto finto array che non serve a niente
 
-protezione: 
-  - da menù 
-  - comando 58 per scrivere 0xfe nell'ultima locazione eeprom write0xFEToLastEEPROM() protezione attiva; 
-  - il comando 59 la legge verifyLastEEPROMValue();
-  - comando 57 per scrivere 0xff nell'ultima locazione eeprom write0xFFToLastEEPROM(); test se protezione funziona
-  - ad ogni incremento di ore del timer verifica, se non è 0xfe si blocca, funziona solo un'ora, (debug ogni minuto)
 
 
 Al reset si accende semaforo rosso
